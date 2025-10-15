@@ -28,7 +28,7 @@ import StarConfig from './components/configs/StarConfig.vue'
 import StarProperty from './components/properties/StarProperty.vue'
 
 import PathConfig from './components/configs/PathConfig.vue'
-  import PathProperty from './components/properties/PathProperty.vue'
+import PathProperty from './components/properties/PathProperty.vue'
 
 import {
   initApp,
@@ -39,7 +39,16 @@ import {
   changeBackgroundColor,
 } from './index'
 
-import { createRect, createText, createImage, createPolygon, createEllipse, createLine, createStar, createPath } from './utils/element'
+import {
+  createRect,
+  createText,
+  createImage,
+  createPolygon,
+  createEllipse,
+  createLine,
+  createStar,
+  createPath,
+} from './utils/element'
 
 const isDark = useDark()
 const app = ref<App>()
@@ -48,7 +57,7 @@ const leaferContainer = useTemplateRef('leaferContainer')
 const exportImageName = ref('image')
 const exportJsonName = ref('template')
 const selectedTarget = ref<IUI>()
-const properties = ref<{name: string, value: any}[]>([])
+const properties = ref<{ name: string; value: any }[]>([])
 const configApp = ref<IAppConfig>({
   fill: '#6a6868',
   editor: {},
@@ -59,7 +68,12 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
 }
 
 const generateRect = (config: IRectConfig) => {
-  createRect(config, app.value as App, leaferContainer.value as HTMLElement, properties)
+  createRect(
+    config,
+    app.value as App,
+    leaferContainer.value as HTMLElement,
+    properties
+  )
 }
 
 const changeFill = (color: string) => {
@@ -68,31 +82,66 @@ const changeFill = (color: string) => {
 }
 
 const generateText = (config: ITextConfig) => {
-  createText(config, app.value as App, leaferContainer.value as HTMLElement, properties)
+  createText(
+    config,
+    app.value as App,
+    leaferContainer.value as HTMLElement,
+    properties
+  )
 }
 
 const generateImage = (config: IImageConfig) => {
-  createImage(config, app.value as App, leaferContainer.value as HTMLElement, properties)
+  createImage(
+    config,
+    app.value as App,
+    leaferContainer.value as HTMLElement,
+    properties
+  )
 }
 
 const generatePolygon = (config: IPolygonConfig) => {
-  createPolygon(config, app.value as App, leaferContainer.value as HTMLElement, properties)
+  createPolygon(
+    config,
+    app.value as App,
+    leaferContainer.value as HTMLElement,
+    properties
+  )
 }
 
 const generateEllipse = (config: IEllipseConfig) => {
-  createEllipse(config, app.value as App, leaferContainer.value as HTMLElement, properties)
+  createEllipse(
+    config,
+    app.value as App,
+    leaferContainer.value as HTMLElement,
+    properties
+  )
 }
 
 const generateLine = (config: ILineConfig) => {
-  createLine(config, app.value as App, leaferContainer.value as HTMLElement, properties)
+  createLine(
+    config,
+    app.value as App,
+    leaferContainer.value as HTMLElement,
+    properties
+  )
 }
 
 const generateStar = (config: IStarConfig) => {
-  createStar(config, app.value as App, leaferContainer.value as HTMLElement, properties)
+  createStar(
+    config,
+    app.value as App,
+    leaferContainer.value as HTMLElement,
+    properties
+  )
 }
 
 const generatePath = (config: IPathConfig) => {
-  createPath(config, app.value as App, leaferContainer.value as HTMLElement, properties)
+  createPath(
+    config,
+    app.value as App,
+    leaferContainer.value as HTMLElement,
+    properties
+  )
 }
 
 const toTop = () => {
@@ -127,99 +176,111 @@ onMounted(() => {
 <template>
   <el-container>
     <el-header>
-        <!-- <span @click.stop="toggleDark()">暗黑模式</span> -->
-        <el-switch size="small" v-model="isDark"     :active-action-icon="Moon"
-        :inactive-action-icon="Sunny"  />
+      <div class="header-right">
+        <div>
+          <span>背景色</span>
+          <el-color-picker
+              show-alpha
+              v-model="configApp.fill"
+              @change="changeFill"
+            />
+        </div>
+        <el-switch
+        size="small"
+        v-model="isDark"
+        :active-action-icon="Moon"
+        :inactive-action-icon="Sunny"
+      />
+      <el-button type="primary" @click="selectedFileJson"
+              >导入</el-button
+            >
+            <el-button type="primary" @click="exportImage(exportImageName)"
+              >导出图片</el-button
+            >
+            <el-button
+              type="primary"
+              @click="exportTemplateJson(exportJsonName)"
+              >导出全部</el-button
+            >
+            <el-button
+              type="primary"
+              @click="exportSelectedJson(exportJsonName)"
+              >导出选中</el-button
+            >
+      </div>
     </el-header>
     <el-main>
       <el-splitter lazy>
-      <el-splitter-panel :collapsible="true" min="300" size="400" max="400">
-        <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="Rect" name="first">
-            <RectConfig @createRect="generateRect" />
-          </el-tab-pane>
-          <el-tab-pane label="Ellipse" name="second">
-            <EllipseConfig @createEllipse="generateEllipse" />
-          </el-tab-pane>
-          <el-tab-pane label="Line" name="third">
-            <LineConfig @createLine="generateLine" />
-          </el-tab-pane>
-          <el-tab-pane label="Polygon" name="fourth">
-            <PolygonConfig @createPolygon="generatePolygon" />
-          </el-tab-pane>
-          <el-tab-pane label="Star" name="fifth">
-            <StarConfig @createStar="generateStar" />
-          </el-tab-pane>
-          <el-tab-pane label="Path" name="sixth">
-            <PathConfig @createPath="generatePath" />
-          </el-tab-pane>
-          <!-- <el-tab-pane label="Pen" name="seventh">Pen</el-tab-pane> -->
-          <el-tab-pane label="Image" name="eighth">
-            <ImageConfig @createImage="generateImage" />
-          </el-tab-pane>
-          <!-- <el-tab-pane label="SVG" name="ninth">SVG</el-tab-pane> -->
-          <!-- <el-tab-pane label="Canvas" name="tenth">Canvas</el-tab-pane> -->
-          <el-tab-pane label="Text" name="eleventh">
-            <TextConfig @createText="generateText" />
-          </el-tab-pane>
-        </el-tabs>
-      </el-splitter-panel>
-      <el-splitter-panel :collapsible="true" min="600">
-        <div ref="leaferContainer" id="leafer-container"></div>
-      </el-splitter-panel>
-      <el-splitter-panel :collapsible="true" min="300" size="400" max="400">
-        <el-form-item>
-          <el-color-picker show-alpha v-model="configApp.fill" @change="changeFill" />
-        </el-form-item>
-        <el-form-item class="import-export" label="Import & Export">
-          <el-button type="primary" @click="selectedFileJson"
-            >Import json</el-button
-          >
-          <el-button type="primary" @click="exportImage(exportImageName)"
-            >Export image</el-button
-          >
-          <el-button type="primary" @click="exportTemplateJson(exportJsonName)"
-            >Export all json</el-button
-          >
-          <el-button type="primary" @click="exportSelectedJson(exportJsonName)"
-            >Export selected json</el-button
-          >
-        </el-form-item>
-        <EditorConfig @toTop="toTop" @toBottom="toBottom" />
-        <RectProperty
-          v-if="selectedTarget && selectedTarget.tag === 'Rect'"
-          :data="properties"
-        />
-        <TextProperty
-          v-if="selectedTarget && selectedTarget.tag === 'Text'"
-          :data="properties"
-        />
-        <ImageProperty
-          v-if="selectedTarget && selectedTarget.tag === 'Image'"
-          :data="properties"
-        />
-        <PolygonProperty
-          v-if="selectedTarget && selectedTarget.tag === 'Polygon'"
-          :data="properties"
-        />
-        <EllipseProperty
-          v-if="selectedTarget && selectedTarget.tag === 'Ellipse'"
-          :data="properties"
-        />
-        <LineProperty
-          v-if="selectedTarget && selectedTarget.tag === 'Line'"
-          :data="properties"
-        />
-        <StarProperty
-          v-if="selectedTarget && selectedTarget.tag === 'Star'"
-          :data="properties"
-        />
-        <PathProperty
-          v-if="selectedTarget && selectedTarget.tag === 'Path'"
-          :data="properties"
-        />
-      </el-splitter-panel>
-    </el-splitter>
+        <el-splitter-panel :collapsible="true" min="300" size="400" max="400">
+          <el-tabs v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="Rect" name="first">
+              <RectConfig @createRect="generateRect" />
+            </el-tab-pane>
+            <el-tab-pane label="Ellipse" name="second">
+              <EllipseConfig @createEllipse="generateEllipse" />
+            </el-tab-pane>
+            <el-tab-pane label="Line" name="third">
+              <LineConfig @createLine="generateLine" />
+            </el-tab-pane>
+            <el-tab-pane label="Polygon" name="fourth">
+              <PolygonConfig @createPolygon="generatePolygon" />
+            </el-tab-pane>
+            <el-tab-pane label="Star" name="fifth">
+              <StarConfig @createStar="generateStar" />
+            </el-tab-pane>
+            <el-tab-pane label="Path" name="sixth">
+              <PathConfig @createPath="generatePath" />
+            </el-tab-pane>
+            <!-- <el-tab-pane label="Pen" name="seventh">Pen</el-tab-pane> -->
+            <el-tab-pane label="Image" name="eighth">
+              <ImageConfig @createImage="generateImage" />
+            </el-tab-pane>
+            <!-- <el-tab-pane label="SVG" name="ninth">SVG</el-tab-pane> -->
+            <!-- <el-tab-pane label="Canvas" name="tenth">Canvas</el-tab-pane> -->
+            <el-tab-pane label="Text" name="eleventh">
+              <TextConfig @createText="generateText" />
+            </el-tab-pane>
+          </el-tabs>
+        </el-splitter-panel>
+        <el-splitter-panel :collapsible="true" min="600">
+          <div ref="leaferContainer" id="leafer-container"></div>
+        </el-splitter-panel>
+        <el-splitter-panel :collapsible="true" min="300" size="400" max="400">
+          <EditorConfig @toTop="toTop" @toBottom="toBottom" />
+          <RectProperty
+            v-if="selectedTarget && selectedTarget.tag === 'Rect'"
+            :data="properties"
+          />
+          <TextProperty
+            v-if="selectedTarget && selectedTarget.tag === 'Text'"
+            :data="properties"
+          />
+          <ImageProperty
+            v-if="selectedTarget && selectedTarget.tag === 'Image'"
+            :data="properties"
+          />
+          <PolygonProperty
+            v-if="selectedTarget && selectedTarget.tag === 'Polygon'"
+            :data="properties"
+          />
+          <EllipseProperty
+            v-if="selectedTarget && selectedTarget.tag === 'Ellipse'"
+            :data="properties"
+          />
+          <LineProperty
+            v-if="selectedTarget && selectedTarget.tag === 'Line'"
+            :data="properties"
+          />
+          <StarProperty
+            v-if="selectedTarget && selectedTarget.tag === 'Star'"
+            :data="properties"
+          />
+          <PathProperty
+            v-if="selectedTarget && selectedTarget.tag === 'Path'"
+            :data="properties"
+          />
+        </el-splitter-panel>
+      </el-splitter>
     </el-main>
   </el-container>
 </template>
@@ -235,9 +296,20 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   color: #fff;
-  .el-header {
-    background-color: #640404;
-    color: #fff;
+}
+
+.el-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  background-color: #640404;
+  color: #fff;
+
+  .header-right {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 10px;
+    grid-column: 3;
   }
 }
 
