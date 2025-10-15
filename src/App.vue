@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, useTemplateRef, onMounted } from 'vue'
+import { ref, useTemplateRef, onMounted, type Ref } from 'vue'
 import { useDark } from '@vueuse/core'
 import { Sunny, Moon } from '@element-plus/icons-vue'
 import type { TabsPaneContext } from 'element-plus'
-import { type IAppConfig, type App, PointerEvent, type IUI } from 'leafer-ui'
+import { type IAppConfig, type App, type IUI } from 'leafer-ui'
+
 import RectConfig from './components/configs/RectConfig.vue'
 import RectProperty from './components/properties/RectProperty.vue'
 
@@ -30,6 +31,8 @@ import StarProperty from './components/properties/StarProperty.vue'
 import PathConfig from './components/configs/PathConfig.vue'
 import PathProperty from './components/properties/PathProperty.vue'
 
+import RightMenu from './components/RightMenu.vue'
+
 import {
   initApp,
   selectedJson,
@@ -50,6 +53,8 @@ import {
   createPath,
 } from './utils/element'
 
+import { beforeSelect, onContextmenu } from './utils/event'
+
 const isDark = useDark()
 const app = ref<App>()
 const activeName = ref('first')
@@ -58,6 +63,11 @@ const exportImageName = ref('image')
 const exportJsonName = ref('template')
 const selectedTarget = ref<IUI>()
 const properties = ref<{ name: string; value: any }[]>([])
+const isShowRightMenu = ref(false)
+const rightMenuPosition = ref({
+  x: 0,
+  y: 0,
+})
 const configApp = ref<IAppConfig>({
   fill: '#6a6868',
   editor: {},
@@ -145,11 +155,37 @@ const generatePath = (config: IPathConfig) => {
 }
 
 const toTop = () => {
+  const target = app.value?.editor.target
+  if (target && !Array.isArray(target)) {
+    target.zIndex = undefined
+  }
   app.value?.editor.toTop()
 }
 
 const toBottom = () => {
+  const target = app.value?.editor.target
+  if (target && !Array.isArray(target)) {
+    target.zIndex = undefined
+  }
   app.value?.editor.toBottom()
+}
+
+const toTopByOne = () => {
+  const target = app.value?.editor.target
+  if (target && !Array.isArray(target)) {
+    target.zIndex = (target.zIndex ?? 0) + 1
+  }
+}
+
+const toBottomByOne = () => {
+  const target = app.value?.editor.target
+  if (target && !Array.isArray(target)) {
+    target.zIndex = (target.zIndex ?? 0) - 1
+  }
+}
+
+const deleteElement = () => {
+  app.value?.editor.list.forEach((rect) => rect.remove())
 }
 
 const selectedFileJson = () => {
@@ -158,8 +194,8 @@ const selectedFileJson = () => {
 
 onMounted(() => {
   app.value = initApp(leaferContainer.value as HTMLElement, configApp.value)
-  app.value?.editor.on(PointerEvent.TAP, () => {
-    const target = app.value?.editor.target
+  beforeSelect(app.value as App, (target) => {
+    
     if (target && !Array.isArray(target)) {
       selectedTarget.value = target
       properties.value = Object.entries(target.toJSON()).map(
@@ -168,6 +204,21 @@ onMounted(() => {
           value: JSON.stringify(value),
         })
       )
+    } else {
+      selectedTarget.value = undefined
+      properties.value = []
+      isShowRightMenu.value = false
+    }
+  })
+
+  onContextmenu(app.value as App, (e: MouseEvent) => {
+    const target = app.value?.editor.target
+    if (target && !Array.isArray(target)) {
+      isShowRightMenu.value = true
+      rightMenuPosition.value.x = e.clientX
+      rightMenuPosition.value.y = e.clientY
+    } else {
+      isShowRightMenu.value = false
     }
   })
 })
@@ -180,33 +231,27 @@ onMounted(() => {
         <div>
           <span>背景色</span>
           <el-color-picker
-              show-alpha
-              v-model="configApp.fill"
-              @change="changeFill"
-            />
+            show-alpha
+            v-model="configApp.fill"
+            @change="changeFill"
+          />
         </div>
         <el-switch
-        size="small"
-        v-model="isDark"
-        :active-action-icon="Moon"
-        :inactive-action-icon="Sunny"
-      />
-      <el-button type="primary" @click="selectedFileJson"
-              >导入</el-button
-            >
-            <el-button type="primary" @click="exportImage(exportImageName)"
-              >导出图片</el-button
-            >
-            <el-button
-              type="primary"
-              @click="exportTemplateJson(exportJsonName)"
-              >导出全部</el-button
-            >
-            <el-button
-              type="primary"
-              @click="exportSelectedJson(exportJsonName)"
-              >导出选中</el-button
-            >
+          size="small"
+          v-model="isDark"
+          :active-action-icon="Moon"
+          :inactive-action-icon="Sunny"
+        />
+        <el-button type="primary" @click="selectedFileJson">导入</el-button>
+        <el-button type="primary" @click="exportImage(exportImageName)"
+          >导出图片</el-button
+        >
+        <el-button type="primary" @click="exportTemplateJson(exportJsonName)"
+          >导出全部</el-button
+        >
+        <el-button type="primary" @click="exportSelectedJson(exportJsonName)"
+          >导出选中</el-button
+        >
       </div>
     </el-header>
     <el-main>
@@ -244,9 +289,9 @@ onMounted(() => {
         </el-splitter-panel>
         <el-splitter-panel :collapsible="true" min="600">
           <div ref="leaferContainer" id="leafer-container"></div>
+          <RightMenu v-if="isShowRightMenu" :position="rightMenuPosition" @toTopByOne="toTopByOne" @toBottomByOne="toBottomByOne" @toTop="toTop" @toBottom="toBottom" @deleteElement="deleteElement" />
         </el-splitter-panel>
         <el-splitter-panel :collapsible="true" min="300" size="400" max="400">
-          <EditorConfig @toTop="toTop" @toBottom="toBottom" />
           <RectProperty
             v-if="selectedTarget && selectedTarget.tag === 'Rect'"
             :data="properties"
