@@ -1,6 +1,5 @@
 import { EditorEvent } from "@leafer-in/editor";
 import { Box, KeyEvent, type App, PointerEvent, type IUI } from "leafer-ui";
-import type { Ref } from "vue";
 
 export const addEvent = (app: App) => { 
 

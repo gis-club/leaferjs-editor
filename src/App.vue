@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, useTemplateRef, onMounted, type Ref } from 'vue'
+import { ref, useTemplateRef, onMounted } from 'vue'
 import { useDark } from '@vueuse/core'
 import { Sunny, Moon } from '@element-plus/icons-vue'
 import type { TabsPaneContext } from 'element-plus'
@@ -7,8 +7,6 @@ import { type IAppConfig, type App, type IUI } from 'leafer-ui'
 
 import RectConfig from './components/configs/RectConfig.vue'
 import RectProperty from './components/properties/RectProperty.vue'
-
-import EditorConfig from './components/configs/EditorConfig.vue'
 
 import TextConfig from './components/configs/TextConfig.vue'
 import TextProperty from './components/properties/TextProperty.vue'
