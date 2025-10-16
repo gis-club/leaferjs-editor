@@ -1,4 +1,5 @@
-import { App, PropertyEvent, Rect, Text, Image, Polygon, Ellipse, Line, Star, Path, type IUI } from "leafer-ui"
+import { Arrow } from "@leafer-in/arrow"
+import { App, PropertyEvent, Rect, Text, Image, Polygon, Ellipse, Line, Star, Path, type IUI, type IStrokeCap, type IStrokeJoin } from "leafer-ui"
 import type { Ref } from "vue"
 
 // 创建矩形
@@ -183,6 +184,27 @@ export const createPath = (config: IPathConfig, app: App, container: Element, pr
   )
   app.tree.add(leaferPath)
   getElementProperties(leaferPath, properties)
+}
+
+export const createArrow = (config: IArrowConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
+  const { x: offsetX, y: offsetY, strokeCap, strokeJoin, strokeWidth, stroke, editable } = config
+
+  const { x, y } = getXY(container)
+
+  const arrow = Arrow.one({
+    x: Number(offsetX),
+    y: Number(offsetY),
+    strokeCap: strokeCap as unknown as IStrokeCap,
+    strokeJoin: strokeJoin as unknown as IStrokeJoin,
+    strokeWidth: Number(strokeWidth),
+    stroke: stroke,
+    editable: editable,
+  },
+  x,
+  y,
+  )
+  app.tree.add(arrow)
+  getElementProperties(arrow, properties)
 }
 
 /**

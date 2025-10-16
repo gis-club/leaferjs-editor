@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@leafer-in/arrow": "^1.9.12",
     "@leafer-in/editor": "^1.9.12",
     "@leafer-in/export": "^1.9.12",
     "@leafer-in/resize": "^1.9.12",

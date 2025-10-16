@@ -29,6 +29,9 @@ import StarProperty from './components/properties/StarProperty.vue'
 import PathConfig from './components/configs/PathConfig.vue'
 import PathProperty from './components/properties/PathProperty.vue'
 
+import ArrowConfig from './components/configs/ArrowConfig.vue'
+import ArrowProperty from './components/properties/ArrowProperty.vue'
+
 import RightMenu from './components/RightMenu.vue'
 
 import {
@@ -49,6 +52,7 @@ import {
   createLine,
   createStar,
   createPath,
+  createArrow,
 } from './utils/element'
 
 import { beforeSelect, onContextmenu } from './utils/event'
@@ -152,6 +156,14 @@ const generatePath = (config: IPathConfig) => {
   )
 }
 
+const generateArrow = (config: IArrowConfig) => {
+  createArrow(
+    config,
+    app.value as App,
+    leaferContainer.value as HTMLElement,
+    properties
+  )
+}
 const toTop = () => {
   const target = app.value?.editor.target
   if (target && !Array.isArray(target)) {
@@ -293,6 +305,9 @@ onMounted(() => {
             <el-tab-pane label="Text" name="eleventh">
               <TextConfig @createText="generateText" />
             </el-tab-pane>
+            <el-tab-pane label="Arrow" name="twelfth">
+              <ArrowConfig @createArrow="generateArrow" />
+            </el-tab-pane>
           </el-tabs>
         </el-splitter-panel>
         <el-splitter-panel :collapsible="true" min="600">
@@ -337,6 +352,11 @@ onMounted(() => {
           />
           <TextProperty
             v-if="selectedTarget && selectedTarget.tag === 'Text'"
+            :data="properties"
+            @update:data="updateData"
+          />
+          <ArrowProperty
+            v-if="selectedTarget && selectedTarget.tag === 'Arrow'"
             :data="properties"
             @update:data="updateData"
           />
