@@ -7,7 +7,7 @@ const emit = defineEmits(['createImage'])
 const form = reactive({
   width: 0, // 宽度
   height: 0, // 高度
-  url: 'http://localhost:5173/vite.svg', // 图片地址
+  url: 'http://localhost:3000/vite.svg', // 图片地址
   editable: true, // 是否可编辑
 })
 

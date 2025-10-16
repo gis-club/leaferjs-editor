@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import {defineProps, computed} from 'vue'
+import {defineProps} from 'vue'
+
+const emits = defineEmits(['update:data'])
 
 const props = defineProps({
   data: {
@@ -8,16 +10,25 @@ const props = defineProps({
   }
 })
 
-const height = computed(() => {
-  return window.innerHeight - 420
-})
+const updateData = (row: { name: string, value: any }) => {
+  emits('update:data', row)
+}
 
 </script>
 
 <template>
-  <el-table :data="data" stripe style="width: 100%" :height="height">
-    <el-table-column prop="name" label="属性名" width="180" />
-    <el-table-column prop="value" label="属性值"  />
+  <el-table :data="data" stripe style="width: 100%">
+    <el-table-column prop="name" label="属性名" width="180"/>
+    <el-table-column prop="value" label="属性值" >
+      <template #default="{ row }">
+        <el-color-picker v-if="row.name === 'fill'" v-model="row.value" @change="updateData(row)" />
+        <el-input v-else-if="row.name === 'tag'" disabled v-model="row.value" @change="updateData(row)" />
+        <el-checkbox v-else-if="row.name === 'editable' || row.name === 'italic'" v-model="row.value" @change="updateData(row)" />
+        <el-input v-else-if="row.name === 'path'" type="textarea" v-model="row.value" @change="updateData({name: row.name, value: JSON.parse(row.value)})" ></el-input>
+        <el-input v-else-if="row.name === 'windingRule' || row.name === 'text'"  v-model="row.value" @change="updateData(row)" />
+        <el-input v-else type="number" v-model="row.value" @change="updateData({name: row.name, value: Number(row.value)})" />
+      </template>
+    </el-table-column>
   </el-table>
 </template>
 

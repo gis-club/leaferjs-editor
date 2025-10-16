@@ -9,7 +9,7 @@ const form = reactive({
   height: 200, // 高度
   fill: '#32cd79', // 填充颜色
   corners: 3, // 边数
-  innerRadius: 0, // 内圆半径
+  innerRadius: 0.2, // 内圆半径
   cornerRadius: 0, // 圆角
   editable: true, // 是否可编辑
 })

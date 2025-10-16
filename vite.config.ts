@@ -19,6 +19,9 @@ export default defineConfig({
         additionalData: `@use "@/styles/light.scss" as *;`,
       },
     },
+  },
+  server: {
+    port: 3000,
   }
 
 })

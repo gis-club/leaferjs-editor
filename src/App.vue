@@ -190,6 +190,16 @@ const selectedFileJson = () => {
   selectedJson(properties)
 }
 
+const updateData = (row: { name: string, value: any }) => {
+  console.log(row);
+  
+  const target = selectedTarget.value as any
+  if (target) {
+    target[row.name] = row.value
+  }
+}
+
+
 onMounted(() => {
   app.value = initApp(leaferContainer.value as HTMLElement, configApp.value)
   beforeSelect(app.value as App, (target) => {
@@ -199,7 +209,7 @@ onMounted(() => {
       properties.value = Object.entries(target.toJSON()).map(
         ([key, value]) => ({
           name: key,
-          value: JSON.stringify(value),
+          value: value instanceof Object ? JSON.stringify(value) : value,
         })
       )
     } else {
@@ -293,34 +303,42 @@ onMounted(() => {
           <RectProperty
             v-if="selectedTarget && selectedTarget.tag === 'Rect'"
             :data="properties"
-          />
-          <TextProperty
-            v-if="selectedTarget && selectedTarget.tag === 'Text'"
-            :data="properties"
-          />
-          <ImageProperty
-            v-if="selectedTarget && selectedTarget.tag === 'Image'"
-            :data="properties"
-          />
-          <PolygonProperty
-            v-if="selectedTarget && selectedTarget.tag === 'Polygon'"
-            :data="properties"
+            @update:data="updateData"
           />
           <EllipseProperty
             v-if="selectedTarget && selectedTarget.tag === 'Ellipse'"
             :data="properties"
+            @update:data="updateData"
           />
           <LineProperty
             v-if="selectedTarget && selectedTarget.tag === 'Line'"
             :data="properties"
+            @update:data="updateData"
+          />
+          <PolygonProperty
+            v-if="selectedTarget && selectedTarget.tag === 'Polygon'"
+            :data="properties"
+            @update:data="updateData"
           />
           <StarProperty
             v-if="selectedTarget && selectedTarget.tag === 'Star'"
             :data="properties"
+            @update:data="updateData"
           />
           <PathProperty
             v-if="selectedTarget && selectedTarget.tag === 'Path'"
             :data="properties"
+            @update:data="updateData"
+          />
+          <ImageProperty
+            v-if="selectedTarget && selectedTarget.tag === 'Image'"
+            :data="properties"
+            @update:data="updateData"
+          />
+          <TextProperty
+            v-if="selectedTarget && selectedTarget.tag === 'Text'"
+            :data="properties"
+            @update:data="updateData"
           />
         </el-splitter-panel>
       </el-splitter>

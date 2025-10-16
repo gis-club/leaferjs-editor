@@ -68,24 +68,10 @@ export const beforeSelect = (app: App, callback: (target: IUI | IUI[]) => void) 
  */
 const judgeKey = (code: string, app: App) => { 
   switch (code) {
-    case 'Backspace':
-      return handleBackspace(app)
     case 'Delete':
       return handleDelete(app)
     default:
       return false
-  }
-}
-
-/**
- * @description 删除元素
- * @param {App} app
- * @returns {void}
- */
-const handleBackspace = (app: App) => {
-  const target = app.editor.target
-  if (target && !Array.isArray(target)) {
-    app.tree.remove(target)
   }
 }
 

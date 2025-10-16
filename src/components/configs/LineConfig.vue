@@ -6,6 +6,7 @@ const emit = defineEmits(['createLine'])
 // do not use same name with ref
 const form = reactive({
   width: 200, // 宽度
+  points: [10, 90, 10, 10, 50, 70, 90, 10, 90, 90], // 点
   stroke: '#32cd79', // 填充颜色
   rotation: 0, // 旋转
   close: false, // 是否闭合
@@ -26,6 +27,11 @@ const onSubmit = () => {
   <el-form :model="form" label-width="auto" style="max-width: 600px">
     <el-form-item label="Width">
       <el-input type="number" :min="1" v-model="form.width" />
+    </el-form-item>
+    <el-form-item label="Points">
+      <el-input type="textarea" v-model="form.points" >
+        {{ form.points.join(',') }}
+      </el-input>
     </el-form-item>
     <el-form-item label="Rotation">
       <el-input type="number" :min="1" v-model="form.rotation" />

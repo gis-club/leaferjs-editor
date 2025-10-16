@@ -123,12 +123,13 @@ export const createEllipse = (config: IEllipseConfig, app: App, container: Eleme
 } 
 
 export const createLine = (config: ILineConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
-  const { width, rotation, close, curve, cornerRadius, stroke, strokeWidth, editable } = config
+  const { width, points, rotation, close, curve, cornerRadius, stroke, strokeWidth, editable } = config
 
   const { x, y } = getXY(container, width)
 
   const line = Line.one({
     width: Number(width),
+    points: points,
     rotation: Number(rotation),
     close: close,
     curve: Number(curve),
@@ -207,7 +208,7 @@ const getElementProperties = (element: IUI, properties: Ref<{name: string, value
   element.on(PropertyEvent.CHANGE, () => {
     properties.value = Object.entries(element.toJSON()).map(([key, value]) => ({
       name: key,
-      value: JSON.stringify(value),
+      value: value instanceof Object ? JSON.stringify(value) : value,
     }))
   })
 }
