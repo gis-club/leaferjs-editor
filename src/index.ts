@@ -1,6 +1,7 @@
 import {
   App,
   type IAppConfig,
+  type IExportResult,
 
 } from 'leafer-ui'
 import { importJson } from './utils/file'
@@ -37,7 +38,37 @@ export const exportImage = async (name: string) => {
     throw new Error('File name is required')
   }
 
-  app.leafer?.export(name + '.png')
+  app.leafer?.tree?.export(name, {
+    quality: 2,
+    pixelRatio: 2,
+    fill: '#00000000',
+    smooth: true,
+    padding: 0,
+    contextSettings: {
+      willReadFrequently: true,
+      alpha: true,
+    },
+    blob: true,
+  }).then((result: IExportResult) => {
+    if (result.data && result.data instanceof Blob) { 
+      console.log(result.data);
+      const fileReader = new FileReader()
+      fileReader.readAsDataURL(result.data)
+      fileReader.onload = (e) => {
+        console.log(e.target?.result);
+        debugger
+      }
+      // debugger
+      // const url = URL.createObjectURL(result.data)
+      // console.log(url);
+      // const a = document.createElement('a');
+      // a.href = url;
+      // const absoluteUrl = a.href;
+      // console.log(absoluteUrl);
+
+    } 
+    
+  })
 }
 
 /**

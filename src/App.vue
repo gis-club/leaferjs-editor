@@ -32,6 +32,9 @@ import PathProperty from './components/properties/PathProperty.vue'
 import ArrowConfig from './components/configs/ArrowConfig.vue'
 import ArrowProperty from './components/properties/ArrowProperty.vue'
 
+import HTMLConfig from './components/configs/HTMLConfig.vue'
+import HTMLProperty from './components/properties/HTMLProperty.vue'
+
 import RightMenu from './components/RightMenu.vue'
 
 import {
@@ -53,6 +56,7 @@ import {
   createStar,
   createPath,
   createArrow,
+  createHTML,
 } from './utils/element'
 
 import { beforeSelect, onContextmenu } from './utils/event'
@@ -164,6 +168,21 @@ const generateArrow = (config: IArrowConfig) => {
     properties
   )
 }
+
+const generateHTML = () => {
+  const config: IHTMLConfig = {
+    x: 0,
+    y: 0,
+    text: codeEditorDrawContent.value,
+    editable: true,
+  }
+  createHTML(
+    config as IHTMLConfig,
+    app.value as App,
+    leaferContainer.value as HTMLElement,
+    properties
+  )
+}
 const toTop = () => {
   const target = app.value?.editor.target
   if (target && !Array.isArray(target)) {
@@ -211,6 +230,19 @@ const updateData = (row: { name: string, value: any }) => {
   }
 }
 
+const isCodeEditorDraw = ref(false)
+const codeEditorDrawContent = ref('')
+const codeEditorDraw = () => {
+  console.log('代码编辑绘制')
+  isCodeEditorDraw.value = true
+}
+
+const exitCodeEditorDraw = () => {
+  console.log('退出代码编辑绘制')
+  isCodeEditorDraw.value = false
+}
+
+
 
 onMounted(() => {
   app.value = initApp(leaferContainer.value as HTMLElement, configApp.value)
@@ -247,6 +279,10 @@ onMounted(() => {
 <template>
   <el-container>
     <el-header>
+      <div class="header-left">
+        <el-button type="primary" v-if="!isCodeEditorDraw" @click="codeEditorDraw">代码编辑绘制</el-button>
+        <el-button type="primary" v-if="isCodeEditorDraw" @click="exitCodeEditorDraw">退出代码编辑绘制</el-button>
+      </div>
       <div class="header-right">
         <div>
           <span>背景色</span>
@@ -277,7 +313,7 @@ onMounted(() => {
     <el-main>
       <el-splitter lazy>
         <el-splitter-panel :collapsible="true" min="300" size="400" max="400">
-          <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tabs v-if="!isCodeEditorDraw" v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="Rect" name="first">
               <RectConfig @createRect="generateRect" />
             </el-tab-pane>
@@ -309,6 +345,15 @@ onMounted(() => {
               <ArrowConfig @createArrow="generateArrow" />
             </el-tab-pane>
           </el-tabs>
+
+          <div v-else="isCodeEditorDraw" class="code-editor-draw">
+            <el-input type="textarea" v-model="codeEditorDrawContent" />
+            <el-form-item >
+              <el-button type="primary" @click="generateHTML">生成图形元素</el-button>
+              <el-button type="primary" @click="() => codeEditorDrawContent = ''">清空</el-button>
+            </el-form-item>
+          </div>
+
         </el-splitter-panel>
         <el-splitter-panel :collapsible="true" min="600">
           <div ref="leaferContainer" id="leafer-container"></div>
@@ -360,8 +405,14 @@ onMounted(() => {
             :data="properties"
             @update:data="updateData"
           />
+          <HTMLProperty
+            v-if="selectedTarget && selectedTarget.tag === 'HTML'"
+            :data="properties"
+            @update:data="updateData"
+          />
         </el-splitter-panel>
       </el-splitter>
+
     </el-main>
   </el-container>
 </template>
@@ -403,6 +454,11 @@ onMounted(() => {
 }
 
 #leafer-container {
+  width: 100%;
+  height: 100%;
+}
+
+.code-editor-draw {
   width: 100%;
   height: 100%;
 }

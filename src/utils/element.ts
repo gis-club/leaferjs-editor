@@ -1,6 +1,35 @@
 import { Arrow } from "@leafer-in/arrow"
 import { App, PropertyEvent, Rect, Text, Image, Polygon, Ellipse, Line, Star, Path, type IUI, type IStrokeCap, type IStrokeJoin } from "leafer-ui"
+import { HTMLText } from "@leafer-in/html"
 import type { Ref } from "vue"
+
+/**
+ * @description 获取元素位置
+ * @param {Element} container 容器
+ * @param {number} width 宽度
+ * @param {number} height 高度
+ * @returns {Object} 位置
+ */
+const getXY = (container: Element, width: number = 0, height: number = 0) => {
+  return {
+    x: container.clientWidth / 2 - width / 2,
+    y: container.clientHeight / 2 - height / 2,
+  }
+}
+
+/**
+ * @description 获取元素属性
+ * @param element 元素
+ * @param properties 属性
+ */
+const getElementProperties = (element: IUI, properties: Ref<{name: string, value: any}[]>) => {
+  element.on(PropertyEvent.CHANGE, () => {
+    properties.value = Object.entries(element.toJSON()).map(([key, value]) => ({
+      name: key,
+      value: value instanceof Object ? JSON.stringify(value) : value,
+    }))
+  })
+}
 
 // 创建矩形
 export const createRect = (config: IRectConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
@@ -207,33 +236,25 @@ export const createArrow = (config: IArrowConfig, app: App, container: Element, 
   getElementProperties(arrow, properties)
 }
 
-/**
- * @description 获取元素位置
- * @param {Element} container 容器
- * @param {number} width 宽度
- * @param {number} height 高度
- * @returns {Object} 位置
- */
-const getXY = (container: Element, width: number = 0, height: number = 0) => {
-  return {
-    x: container.clientWidth / 2 - width / 2,
-    y: container.clientHeight / 2 - height / 2,
-  }
+export const createHTML = (config: IHTMLConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
+  const { x: offsetX, y: offsetY, text, editable } = config
+
+  const { x, y } = getXY(container)
+  
+  const html = HTMLText.one({
+    x: Number(offsetX),
+    y: Number(offsetY),
+    text: text,
+    editable: editable,
+  },
+  x, y,
+  )
+
+  getElementProperties(html, properties)
+  app.tree.add(html)
 }
 
-/**
- * @description 获取元素属性
- * @param element 元素
- * @param properties 属性
- */
-const getElementProperties = (element: IUI, properties: Ref<{name: string, value: any}[]>) => {
-  element.on(PropertyEvent.CHANGE, () => {
-    properties.value = Object.entries(element.toJSON()).map(([key, value]) => ({
-      name: key,
-      value: value instanceof Object ? JSON.stringify(value) : value,
-    }))
-  })
-}
+
 
 /**
  * @description 创建叶子实例
