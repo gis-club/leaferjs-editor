@@ -3,7 +3,7 @@ import * as Monaco from 'monaco-editor'
 
 const register = (monaco: typeof Monaco) => {
   monaco.languages.registerCompletionItemProvider("html", {
-    provideCompletionItems: (model: Monaco.editor.ITextModel, position: Monaco.Position) => {
+    provideCompletionItems: () => {
       let suggestions =
         "div,script,style,html,body,head,title,p,span,h1,h2,h3,h4,h5,h6,b,strong,i,em,center,ul,ol,li,font,sub,sup,table,tbody,thead,th,tr,td,form"
           .split(",")
