@@ -1,12 +1,23 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
+import monacoEditorPluginModule from 'vite-plugin-monaco-editor'
 
+const isObjectWithDefaultFunction = (module: unknown): module is { default: typeof monacoEditorPluginModule } => (
+  module != null &&
+  typeof module === 'object' &&
+  'default' in module &&
+  typeof module.default === 'function'
+)
+
+const monacoEditorPlugin = isObjectWithDefaultFunction(monacoEditorPluginModule)
+  ? monacoEditorPluginModule.default
+  : monacoEditorPluginModule
 
 // https://vite.dev/config/
 export default defineConfig({
   base: './',
-  plugins: [vue()],
+  plugins: [monacoEditorPlugin({}), vue()],
   resolve: {
     alias: {
       '@/': `${path.resolve(__dirname, 'src')}/`,

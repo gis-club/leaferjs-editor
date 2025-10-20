@@ -19,6 +19,9 @@
     "element-plus": "^2.11.4",
     "file-saver": "^2.0.5",
     "leafer-ui": "^1.9.12",
+    "lodash": "^4.17.21",
+    "monaco-editor": "^0.54.0",
+    "uuid": "^13.0.0",
     "vue": "^3.5.22"
   },
   "devDependencies": {
@@ -29,6 +32,7 @@
     "sass": "^1.93.2",
     "typescript": "~5.9.3",
     "vite": "^7.1.7",
+    "vite-plugin-monaco-editor": "^1.1.0",
     "vue-tsc": "^3.1.0"
   }
 }

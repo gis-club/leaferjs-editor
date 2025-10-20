@@ -14,6 +14,10 @@ const updateData = (row: { name: string, value: any }) => {
   emits('update:data', row)
 }
 
+document.getElementsByClassName('text')
+setInterval(() => {
+  console.log(document.getElementsByClassName('text'))
+}, 1000)
 
 </script>
 
@@ -22,10 +26,10 @@ const updateData = (row: { name: string, value: any }) => {
     <el-table-column prop="name" label="属性名" width="180"/>
     <el-table-column prop="value" label="属性值" >
       <template #default="{ row }">
-        <el-color-picker v-if="row.name === 'stroke'" v-model="row.value" @change="updateData(row)" />
+        <el-input v-if="row.name === 'fill' " type="textarea" v-model="row.value" @change="updateData({name: row.name, value: JSON.parse(row.value)})" ></el-input>
         <el-input v-else-if="row.name === 'tag'" disabled v-model="row.value" @change="updateData(row)" />
-        <el-checkbox v-else-if="row.name === 'editable'" v-model="row.value" @change="updateData(row)" />
-        <el-input v-else-if="row.name === 'strokeCap' || row.name === 'strokeJoin'" v-model="row.value" @change="updateData(row)" />
+        <el-checkbox v-else-if="row.name === 'editable' || row.name === 'italic'" v-model="row.value" @change="updateData(row)" />
+        <el-input v-else-if="row.name === 'text'" type="textarea" v-model="row.value" @change="updateData(row)" ></el-input>
         <el-input v-else type="number" v-model="row.value" @change="updateData({name: row.name, value: Number(row.value)})" />
       </template>
     </el-table-column>

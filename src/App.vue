@@ -32,10 +32,12 @@ import PathProperty from './components/properties/PathProperty.vue'
 import ArrowConfig from './components/configs/ArrowConfig.vue'
 import ArrowProperty from './components/properties/ArrowProperty.vue'
 
-import HTMLConfig from './components/configs/HTMLConfig.vue'
+import HTMLConfig from './components/configs/HTMLConfig/index.vue'
 import HTMLProperty from './components/properties/HTMLProperty.vue'
 
 import RightMenu from './components/RightMenu.vue'
+
+import { ShapeType as ShapeTypeEnum } from './types/IShapeType'
 
 import {
   initApp,
@@ -78,6 +80,14 @@ const configApp = ref<IAppConfig>({
   fill: '#6a6868',
   editor: {},
 })
+
+const configLayout = ref({
+  min: 300,
+  size: 400,
+  max: 400,
+})
+
+const isOpenEditor = ref(false)
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
@@ -169,11 +179,11 @@ const generateArrow = (config: IArrowConfig) => {
   )
 }
 
-const generateHTML = () => {
+const generateHTML = (code: string) => {
   const config: IHTMLConfig = {
     x: 0,
     y: 0,
-    text: codeEditorDrawContent.value,
+    text: code,
     editable: true,
   }
   createHTML(
@@ -230,25 +240,31 @@ const updateData = (row: { name: string, value: any }) => {
   }
 }
 
-const isCodeEditorDraw = ref(false)
-const codeEditorDrawContent = ref('')
+
+
 const codeEditorDraw = () => {
-  console.log('代码编辑绘制')
-  isCodeEditorDraw.value = true
+  isOpenEditor.value = true
+  changeLayout()
 }
 
 const exitCodeEditorDraw = () => {
-  console.log('退出代码编辑绘制')
-  isCodeEditorDraw.value = false
+  isOpenEditor.value = false
+  changeLayout()
 }
 
-
+const changeLayout = () => {
+  configLayout.value.min = isOpenEditor.value ? 600 : 300
+  configLayout.value.size = isOpenEditor.value ? 800 : 400
+  configLayout.value.max = isOpenEditor.value ? 1200 : 400
+}
 
 onMounted(() => {
   app.value = initApp(leaferContainer.value as HTMLElement, configApp.value)
   beforeSelect(app.value as App, (target) => {
     
     if (target && !Array.isArray(target)) {
+      console.log(target);
+      
       selectedTarget.value = target
       properties.value = Object.entries(target.toJSON()).map(
         ([key, value]) => ({
@@ -279,13 +295,9 @@ onMounted(() => {
 <template>
   <el-container>
     <el-header>
-      <div class="header-left">
-        <el-button type="primary" v-if="!isCodeEditorDraw" @click="codeEditorDraw">代码编辑绘制</el-button>
-        <el-button type="primary" v-if="isCodeEditorDraw" @click="exitCodeEditorDraw">退出代码编辑绘制</el-button>
-      </div>
       <div class="header-right">
         <div>
-          <span>背景色</span>
+          <span>background color</span>
           <el-color-picker
             show-alpha
             v-model="configApp.fill"
@@ -298,22 +310,24 @@ onMounted(() => {
           :active-action-icon="Moon"
           :inactive-action-icon="Sunny"
         />
-        <el-button type="primary" @click="selectedFileJson">导入</el-button>
+        <el-button type="primary" @click="selectedFileJson">import</el-button>
         <el-button type="primary" @click="exportImage(exportImageName)"
-          >导出图片</el-button
+          >export image</el-button
         >
         <el-button type="primary" @click="exportTemplateJson(exportJsonName)"
-          >导出全部</el-button
+          >export all</el-button
         >
         <el-button type="primary" @click="exportSelectedJson(exportJsonName)"
-          >导出选中</el-button
+          >export selected</el-button
         >
+        <el-button type="primary" v-if="!isOpenEditor" @click="codeEditorDraw">open editor</el-button>
+        <el-button type="primary" v-if="isOpenEditor" @click="exitCodeEditorDraw">exit editor</el-button>
       </div>
     </el-header>
     <el-main>
       <el-splitter lazy>
-        <el-splitter-panel :collapsible="true" min="300" size="400" max="400">
-          <el-tabs v-if="!isCodeEditorDraw" v-model="activeName" @tab-click="handleClick">
+        <el-splitter-panel v-if="!isOpenEditor" :collapsible="true" :min="configLayout.min" :size="configLayout.size" :max="configLayout.max">
+          <el-tabs  v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="Rect" name="first">
               <RectConfig @createRect="generateRect" />
             </el-tab-pane>
@@ -345,15 +359,9 @@ onMounted(() => {
               <ArrowConfig @createArrow="generateArrow" />
             </el-tab-pane>
           </el-tabs>
-
-          <div v-else="isCodeEditorDraw" class="code-editor-draw">
-            <el-input type="textarea" v-model="codeEditorDrawContent" />
-            <el-form-item >
-              <el-button type="primary" @click="generateHTML">生成图形元素</el-button>
-              <el-button type="primary" @click="() => codeEditorDrawContent = ''">清空</el-button>
-            </el-form-item>
-          </div>
-
+        </el-splitter-panel>
+        <el-splitter-panel v-else="isOpenEditor" :collapsible="true" :min="configLayout.min" :size="configLayout.size" :max="configLayout.max">
+          <HTMLConfig @createHTML="generateHTML" />
         </el-splitter-panel>
         <el-splitter-panel :collapsible="true" min="600">
           <div ref="leaferContainer" id="leafer-container"></div>
@@ -361,52 +369,52 @@ onMounted(() => {
         </el-splitter-panel>
         <el-splitter-panel :collapsible="true" min="300" size="400" max="400">
           <RectProperty
-            v-if="selectedTarget && selectedTarget.tag === 'Rect'"
+            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Rect"
             :data="properties"
             @update:data="updateData"
           />
           <EllipseProperty
-            v-if="selectedTarget && selectedTarget.tag === 'Ellipse'"
+            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Ellipse"
             :data="properties"
             @update:data="updateData"
           />
           <LineProperty
-            v-if="selectedTarget && selectedTarget.tag === 'Line'"
+            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Line"
             :data="properties"
             @update:data="updateData"
           />
           <PolygonProperty
-            v-if="selectedTarget && selectedTarget.tag === 'Polygon'"
+            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Polygon"
             :data="properties"
             @update:data="updateData"
           />
           <StarProperty
-            v-if="selectedTarget && selectedTarget.tag === 'Star'"
+            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Star"
             :data="properties"
             @update:data="updateData"
           />
           <PathProperty
-            v-if="selectedTarget && selectedTarget.tag === 'Path'"
+            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Path"
             :data="properties"
             @update:data="updateData"
           />
           <ImageProperty
-            v-if="selectedTarget && selectedTarget.tag === 'Image'"
+            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Image"
             :data="properties"
             @update:data="updateData"
           />
           <TextProperty
-            v-if="selectedTarget && selectedTarget.tag === 'Text'"
+            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Text"
             :data="properties"
             @update:data="updateData"
           />
           <ArrowProperty
-            v-if="selectedTarget && selectedTarget.tag === 'Arrow'"
+            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Arrow"
             :data="properties"
             @update:data="updateData"
           />
           <HTMLProperty
-            v-if="selectedTarget && selectedTarget.tag === 'HTML'"
+            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.HTMLText"
             :data="properties"
             @update:data="updateData"
           />
