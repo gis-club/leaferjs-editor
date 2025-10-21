@@ -30,6 +30,7 @@ setInterval(() => {
         <el-input v-else-if="row.name === 'tag'" disabled v-model="row.value" @change="updateData(row)" />
         <el-checkbox v-else-if="row.name === 'editable' || row.name === 'italic'" v-model="row.value" @change="updateData(row)" />
         <el-input v-else-if="row.name === 'text'" type="textarea" v-model="row.value" @change="updateData(row)" ></el-input>
+        <el-input v-else-if="row.name === 'filter'" type="textarea" v-model="row.value" @change="updateData({name: row.name, value: JSON.parse(row.value)})" />
         <el-input v-else type="number" v-model="row.value" @change="updateData({name: row.name, value: Number(row.value)})" />
       </template>
     </el-table-column>

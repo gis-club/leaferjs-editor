@@ -25,6 +25,7 @@ const updateData = (row: { name: string, value: any }) => {
         <el-input v-else-if="row.name === 'tag'" disabled v-model="row.value" @change="updateData(row)" />
         <el-checkbox v-else-if="row.name === 'editable' || row.name === 'italic'" v-model="row.value" @change="updateData(row)" />
         <el-input v-else-if="row.name === 'lineHeight'" type="textarea" v-model="row.value" @change="updateData({name: row.name, value: JSON.parse(row.value)})" ></el-input>
+        <el-input v-else-if="row.name === 'filter'" type="textarea" v-model="row.value" @change="updateData({name: row.name, value: JSON.parse(row.value)})" />
         <el-input v-else-if="row.name === 'textDecoration' || row.name === 'text'"  v-model="row.value" @change="updateData(row)" />
         <el-input v-else type="number" v-model="row.value" @change="updateData({name: row.name, value: Number(row.value)})" />
       </template>

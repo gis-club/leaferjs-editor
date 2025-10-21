@@ -2,7 +2,7 @@
 import { ref, useTemplateRef, onMounted } from 'vue'
 import { useDark } from '@vueuse/core'
 import { Sunny, Moon } from '@element-plus/icons-vue'
-import type { TabsPaneContext } from 'element-plus'
+import { type TabsPaneContext, ElMessage } from 'element-plus'
 import { type IAppConfig, type App, type IUI } from 'leafer-ui'
 
 import RectConfig from './components/configs/RectConfig.vue'
@@ -36,6 +36,7 @@ import HTMLConfig from './components/configs/HTMLConfig/index.vue'
 import HTMLProperty from './components/properties/HTMLProperty.vue'
 
 import RightMenu from './components/RightMenu.vue'
+import FilterConfig from './components/FilterConfig.vue'
 
 import { ShapeType as ShapeTypeEnum } from './types/IShapeType'
 
@@ -76,23 +77,32 @@ const rightMenuPosition = ref({
   x: 0,
   y: 0,
 })
+
+// config app
 const configApp = ref<IAppConfig>({
   fill: '#6a6868',
   editor: {},
 })
 
+// config layout
 const configLayout = ref({
   min: 300,
   size: 400,
   max: 400,
 })
 
+// is open editor
 const isOpenEditor = ref(false)
 
+// filter config
+const isShowFilterConfig = ref(false)
+
+// handle click
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
 }
 
+// generate rect
 const generateRect = (config: IRectConfig) => {
   createRect(
     config,
@@ -102,11 +112,13 @@ const generateRect = (config: IRectConfig) => {
   )
 }
 
+// change fill
 const changeFill = (color: string) => {
   configApp.value.fill = color
   changeBackgroundColor(color)
 }
 
+// generate text
 const generateText = (config: ITextConfig) => {
   createText(
     config,
@@ -116,6 +128,7 @@ const generateText = (config: ITextConfig) => {
   )
 }
 
+// generate image
 const generateImage = (config: IImageConfig) => {
   createImage(
     config,
@@ -125,6 +138,7 @@ const generateImage = (config: IImageConfig) => {
   )
 }
 
+// generate polygon
 const generatePolygon = (config: IPolygonConfig) => {
   createPolygon(
     config,
@@ -134,6 +148,7 @@ const generatePolygon = (config: IPolygonConfig) => {
   )
 }
 
+// generate ellipse
 const generateEllipse = (config: IEllipseConfig) => {
   createEllipse(
     config,
@@ -143,6 +158,7 @@ const generateEllipse = (config: IEllipseConfig) => {
   )
 }
 
+// generate line
 const generateLine = (config: ILineConfig) => {
   createLine(
     config,
@@ -152,6 +168,7 @@ const generateLine = (config: ILineConfig) => {
   )
 }
 
+// generate star
 const generateStar = (config: IStarConfig) => {
   createStar(
     config,
@@ -161,6 +178,7 @@ const generateStar = (config: IStarConfig) => {
   )
 }
 
+// generate path
 const generatePath = (config: IPathConfig) => {
   createPath(
     config,
@@ -170,6 +188,7 @@ const generatePath = (config: IPathConfig) => {
   )
 }
 
+// generate arrow
 const generateArrow = (config: IArrowConfig) => {
   createArrow(
     config,
@@ -179,6 +198,7 @@ const generateArrow = (config: IArrowConfig) => {
   )
 }
 
+// generate HTML
 const generateHTML = (code: string) => {
   const config: IHTMLConfig = {
     x: 0,
@@ -193,6 +213,8 @@ const generateHTML = (code: string) => {
     properties
   )
 }
+
+// to top
 const toTop = () => {
   const target = app.value?.editor.target
   if (target && !Array.isArray(target)) {
@@ -201,6 +223,7 @@ const toTop = () => {
   app.value?.editor.toTop()
 }
 
+// to bottom
 const toBottom = () => {
   const target = app.value?.editor.target
   if (target && !Array.isArray(target)) {
@@ -209,6 +232,7 @@ const toBottom = () => {
   app.value?.editor.toBottom()
 }
 
+// to top by one
 const toTopByOne = () => {
   const target = app.value?.editor.target
   if (target && !Array.isArray(target)) {
@@ -216,6 +240,7 @@ const toTopByOne = () => {
   }
 }
 
+// to bottom by one
 const toBottomByOne = () => {
   const target = app.value?.editor.target
   if (target && !Array.isArray(target)) {
@@ -223,48 +248,76 @@ const toBottomByOne = () => {
   }
 }
 
+// delete element
 const deleteElement = () => {
   app.value?.editor.list.forEach((rect) => rect.remove())
 }
 
+// selected file json
 const selectedFileJson = () => {
   selectedJson(properties)
 }
 
-const updateData = (row: { name: string, value: any }) => {
-  console.log(row);
-  
+// update data
+const updateData = (row: { name: string; value: any }) => {
+  console.log(row)
+
   const target = selectedTarget.value as any
   if (target) {
     target[row.name] = row.value
   }
 }
 
+// add filter
+const addFilter = () => {
+  const target = selectedTarget.value as any
+  if (target) {
+    isShowFilterConfig.value = true
+  } else {
+    ElMessage.error('No target selected')
+    isShowFilterConfig.value = false
+  }
+}
 
-
+// code editor draw
 const codeEditorDraw = () => {
   isOpenEditor.value = true
   changeLayout()
 }
 
+// exit code editor draw
 const exitCodeEditorDraw = () => {
   isOpenEditor.value = false
   changeLayout()
 }
 
+// change layout
 const changeLayout = () => {
   configLayout.value.min = isOpenEditor.value ? 600 : 300
   configLayout.value.size = isOpenEditor.value ? 800 : 400
   configLayout.value.max = isOpenEditor.value ? 1200 : 400
 }
 
+// confirm filter
+const confirmFilter = (form: any) => {
+  isShowFilterConfig.value = false
+  const target = selectedTarget.value as any
+  if (target) {
+    target.filter = {
+      type: form.type,
+      blur: Number(form.blur),
+    }
+  }
+}
+
+// on mounted
 onMounted(() => {
   app.value = initApp(leaferContainer.value as HTMLElement, configApp.value)
+  // before select
   beforeSelect(app.value as App, (target) => {
-    
     if (target && !Array.isArray(target)) {
-      console.log(target);
-      
+      console.log(target)
+
       selectedTarget.value = target
       properties.value = Object.entries(target.toJSON()).map(
         ([key, value]) => ({
@@ -279,6 +332,7 @@ onMounted(() => {
     }
   })
 
+  // on contextmenu
   onContextmenu(app.value as App, (e: MouseEvent) => {
     const target = app.value?.editor.target
     if (target && !Array.isArray(target)) {
@@ -295,6 +349,9 @@ onMounted(() => {
 <template>
   <el-container>
     <el-header>
+      <div class="header-center">
+        <el-button type="primary" @click="addFilter">add filter</el-button>
+      </div>
       <div class="header-right">
         <div>
           <span>background color</span>
@@ -320,14 +377,27 @@ onMounted(() => {
         <el-button type="primary" @click="exportSelectedJson(exportJsonName)"
           >export selected</el-button
         >
-        <el-button type="primary" v-if="!isOpenEditor" @click="codeEditorDraw">open editor</el-button>
-        <el-button type="primary" v-if="isOpenEditor" @click="exitCodeEditorDraw">exit editor</el-button>
+        <el-button type="primary" v-if="!isOpenEditor" @click="codeEditorDraw"
+          >open editor</el-button
+        >
+        <el-button
+          type="primary"
+          v-if="isOpenEditor"
+          @click="exitCodeEditorDraw"
+          >exit editor</el-button
+        >
       </div>
     </el-header>
     <el-main>
       <el-splitter lazy>
-        <el-splitter-panel v-if="!isOpenEditor" :collapsible="true" :min="configLayout.min" :size="configLayout.size" :max="configLayout.max">
-          <el-tabs  v-model="activeName" @tab-click="handleClick">
+        <el-splitter-panel
+          v-if="!isOpenEditor"
+          :collapsible="true"
+          :min="configLayout.min"
+          :size="configLayout.size"
+          :max="configLayout.max"
+        >
+          <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="Rect" name="first">
               <RectConfig @createRect="generateRect" />
             </el-tab-pane>
@@ -360,12 +430,26 @@ onMounted(() => {
             </el-tab-pane>
           </el-tabs>
         </el-splitter-panel>
-        <el-splitter-panel v-else="isOpenEditor" :collapsible="true" :min="configLayout.min" :size="configLayout.size" :max="configLayout.max">
+        <el-splitter-panel
+          v-else="isOpenEditor"
+          :collapsible="true"
+          :min="configLayout.min"
+          :size="configLayout.size"
+          :max="configLayout.max"
+        >
           <HTMLConfig @createHTML="generateHTML" />
         </el-splitter-panel>
         <el-splitter-panel :collapsible="true" min="600">
           <div ref="leaferContainer" id="leafer-container"></div>
-          <RightMenu v-if="isShowRightMenu" :position="rightMenuPosition" @toTopByOne="toTopByOne" @toBottomByOne="toBottomByOne" @toTop="toTop" @toBottom="toBottom" @deleteElement="deleteElement" />
+          <RightMenu
+            v-if="isShowRightMenu"
+            :position="rightMenuPosition"
+            @toTopByOne="toTopByOne"
+            @toBottomByOne="toBottomByOne"
+            @toTop="toTop"
+            @toBottom="toBottom"
+            @deleteElement="deleteElement"
+          />
         </el-splitter-panel>
         <el-splitter-panel :collapsible="true" min="300" size="400" max="400">
           <RectProperty
@@ -374,7 +458,9 @@ onMounted(() => {
             @update:data="updateData"
           />
           <EllipseProperty
-            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Ellipse"
+            v-if="
+              selectedTarget && selectedTarget.tag === ShapeTypeEnum.Ellipse
+            "
             :data="properties"
             @update:data="updateData"
           />
@@ -384,7 +470,9 @@ onMounted(() => {
             @update:data="updateData"
           />
           <PolygonProperty
-            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Polygon"
+            v-if="
+              selectedTarget && selectedTarget.tag === ShapeTypeEnum.Polygon
+            "
             :data="properties"
             @update:data="updateData"
           />
@@ -414,13 +502,15 @@ onMounted(() => {
             @update:data="updateData"
           />
           <HTMLProperty
-            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.HTMLText"
+            v-if="
+              selectedTarget && selectedTarget.tag === ShapeTypeEnum.HTMLText
+            "
             :data="properties"
             @update:data="updateData"
           />
+          <FilterConfig v-if="isShowFilterConfig" @confirmFilter="confirmFilter" />
         </el-splitter-panel>
       </el-splitter>
-
     </el-main>
   </el-container>
 </template>
@@ -443,6 +533,13 @@ onMounted(() => {
   grid-template-columns: 1fr 1fr 1fr;
   background-color: #640404;
   color: #fff;
+
+  .header-center {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    grid-column: 2;
+  }
 
   .header-right {
     display: flex;

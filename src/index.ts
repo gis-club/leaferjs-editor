@@ -12,6 +12,9 @@ import { createLeafer } from './utils/element'
 import { addEvent } from './utils/event'
 import type { Ref } from 'vue'
 
+// 导入自定义滤镜
+import './utils/filter'
+
 let app: App
 
 export const initApp = (element: HTMLElement, config: IAppConfig): App => {
