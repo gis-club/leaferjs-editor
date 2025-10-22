@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, shallowRef, inject, type Ref, watch, reactive } from 'vue'
+import { ref, shallowRef, inject, type Ref, reactive } from 'vue'
 import type { App } from 'leafer-ui'
 
 import RectConfig from '@/components/configs/RectConfig.vue'
