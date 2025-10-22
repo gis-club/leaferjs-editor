@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 
-const emit = defineEmits(['createPath'])
+const emit = defineEmits(['createElement'])
 
 // do not use same name with ref
 const form = reactive({
@@ -13,7 +13,7 @@ const form = reactive({
 })
 
 const onSubmit = () => {
-  emit('createPath', form)
+  emit('createElement', form)
 }
 
 

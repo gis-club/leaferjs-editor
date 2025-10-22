@@ -18,7 +18,7 @@ registerMyTheme(monaco)
 let htmlEditor: monaco.editor.IStandaloneCodeEditor
 let cssEditor: monaco.editor.IStandaloneCodeEditor
 
-const emit = defineEmits(['createHTML'])
+const emit = defineEmits(['createElement'])
 const language = ref<string>('html')
 const theme = ref<string>('vs-dark')
 
@@ -56,7 +56,13 @@ const onSubmit = () => {
   // 提取body标签中的内容
   const bodyContent = htmlContent.value.match(/<body>(.*?)<\/body>/s)?.[1]
   const css = '<style>' + cssContent.value + '</style>'
-  emit('createHTML', bodyContent + css)
+  const config: IHTMLConfig = {
+    x: 0,
+    y: 0,
+    text: bodyContent + css,
+    editable: true,
+  }
+  emit('createElement', config)
 }
 
 // 修改语言

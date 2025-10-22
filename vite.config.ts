@@ -20,8 +20,9 @@ export default defineConfig({
   plugins: [monacoEditorPlugin({}), vue()],
   resolve: {
     alias: {
-      '@/': `${path.resolve(__dirname, 'src')}/`,
+      '@': path.resolve(__dirname, 'src'),
     },
+    extensions: ['.js', '.ts', '.jsx', '.tsx', '.json']
   },
   css: {
     preprocessorOptions: {

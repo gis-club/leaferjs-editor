@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, defineEmits } from 'vue'
 
-const emit = defineEmits(['createText'])
+const emit = defineEmits(['createElement'])
 
 // do not use same name with ref
 const form = reactive({
@@ -17,7 +17,7 @@ const form = reactive({
 })
 
 const onSubmit = () => {
-  emit('createText', {
+  emit('createElement', {
     ...form,
     textDecoration: JSON.parse(form.textDecoration),
   })

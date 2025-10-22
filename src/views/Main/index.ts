@@ -4,16 +4,16 @@ import {
   type IExportResult,
 
 } from 'leafer-ui'
-import { importJson } from './utils/file'
+import { importJson } from '../../utils/file'
 import FileSaver from 'file-saver'
 import { ElMessage } from 'element-plus'
 
-import { createLeafer } from './utils/element'
-import { addEvent } from './utils/event'
+import { createLeafer } from '../../utils/element'
+import { addEvent } from '../../utils/event'
 import type { Ref } from 'vue'
 
 // 导入自定义滤镜
-import './utils/filter'
+import '../../utils/filter'
 
 let app: App
 

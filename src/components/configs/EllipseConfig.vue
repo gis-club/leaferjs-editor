@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 
-const emit = defineEmits(['createEllipse'])
+const emit = defineEmits(['createElement'])
 
 // do not use same name with ref
 const form = reactive({
@@ -15,7 +15,7 @@ const form = reactive({
 })
 
 const onSubmit = () => {
-  emit('createEllipse', form)
+  emit('createElement', form)
 }
 
 
