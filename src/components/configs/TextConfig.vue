@@ -13,11 +13,14 @@ const form = reactive({
   fontSize: 50, // 字体大小
   fontWeight: 800, // 字体粗细
   italic: false, // 是否斜体
-  textDecoration: 'none', // 文本装饰
+  textDecoration: JSON.stringify({ type: 'none', color: 'red', offset: 0 }), // 文本装饰
 })
 
 const onSubmit = () => {
-  emit('createText', form)
+  emit('createText', {
+    ...form,
+    textDecoration: JSON.parse(form.textDecoration),
+  })
 }
 
 </script>
@@ -49,7 +52,7 @@ const onSubmit = () => {
       <el-switch inline-prompt active-text="是" inactive-text="否" v-model="form.italic" />
     </el-form-item>
     <el-form-item label="Text Decoration">
-      <el-input v-model="form.textDecoration" />
+      <el-input type="textarea" v-model="form.textDecoration" />
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="onSubmit">Create</el-button>

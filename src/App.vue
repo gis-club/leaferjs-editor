@@ -6,39 +6,28 @@ import { type TabsPaneContext, ElMessage } from 'element-plus'
 import { type IAppConfig, type App, type IUI } from 'leafer-ui'
 
 import RectConfig from './components/configs/RectConfig.vue'
-import RectProperty from './components/properties/RectProperty.vue'
 
 import TextConfig from './components/configs/TextConfig.vue'
-import TextProperty from './components/properties/TextProperty.vue'
 
 import ImageConfig from './components/configs/ImageConfig.vue'
-import ImageProperty from './components/properties/ImageProperty.vue'
 
 import PolygonConfig from './components/configs/PolygonConfig.vue'
-import PolygonProperty from './components/properties/PolygonProperty.vue'
 
 import EllipseConfig from './components/configs/EllipseConfig.vue'
-import EllipseProperty from './components/properties/EllipseProperty.vue'
 
 import LineConfig from './components/configs/LineConfig.vue'
-import LineProperty from './components/properties/LineProperty.vue'
 
 import StarConfig from './components/configs/StarConfig.vue'
-import StarProperty from './components/properties/StarProperty.vue'
 
 import PathConfig from './components/configs/PathConfig.vue'
-import PathProperty from './components/properties/PathProperty.vue'
 
 import ArrowConfig from './components/configs/ArrowConfig.vue'
-import ArrowProperty from './components/properties/ArrowProperty.vue'
 
 import HTMLConfig from './components/configs/HTMLConfig/index.vue'
-import HTMLProperty from './components/properties/HTMLProperty.vue'
 
 import RightMenu from './components/RightMenu.vue'
 import FilterConfig from './components/FilterConfig.vue'
-
-import { ShapeType as ShapeTypeEnum } from './types/IShapeType'
+import ElementProperty from './components/properties/ElementProperty.vue'
 
 import {
   initApp,
@@ -91,11 +80,13 @@ const configLayout = ref({
   max: 400,
 })
 
-// is open editor
-const isOpenEditor = ref(false)
+// is open editor engine
+const isOpenEditorEngine = ref(false)
 
 // filter config
 const isShowFilterConfig = ref(false)
+
+
 
 // handle click
 const handleClick = (tab: TabsPaneContext, event: Event) => {
@@ -253,6 +244,7 @@ const deleteElement = () => {
   app.value?.editor.list.forEach((rect) => rect.remove())
 }
 
+
 // selected file json
 const selectedFileJson = () => {
   selectedJson(properties)
@@ -281,21 +273,21 @@ const addFilter = () => {
 
 // code editor draw
 const codeEditorDraw = () => {
-  isOpenEditor.value = true
+  isOpenEditorEngine.value = true
   changeLayout()
 }
 
 // exit code editor draw
 const exitCodeEditorDraw = () => {
-  isOpenEditor.value = false
+  isOpenEditorEngine.value = false
   changeLayout()
 }
 
 // change layout
 const changeLayout = () => {
-  configLayout.value.min = isOpenEditor.value ? 600 : 300
-  configLayout.value.size = isOpenEditor.value ? 800 : 400
-  configLayout.value.max = isOpenEditor.value ? 1200 : 400
+  configLayout.value.min = isOpenEditorEngine.value ? 600 : 300
+  configLayout.value.size = isOpenEditorEngine.value ? 800 : 400
+  configLayout.value.max = isOpenEditorEngine.value ? 1200 : 400
 }
 
 // confirm filter
@@ -310,14 +302,34 @@ const confirmFilter = (form: any) => {
   }
 }
 
+// cancel filter
+const cancelFilter = () => {
+  isShowFilterConfig.value = false
+}
+
+
+// open edit
+const openEdit = () => {
+  const target = selectedTarget.value as any
+  if (target) {
+    target.editable = true
+  }
+}
+
+// close edit
+const closeEdit = () => {
+  const target = selectedTarget.value as any
+  if (target) {
+    target.editable = false
+  }
+}
+
 // on mounted
 onMounted(() => {
   app.value = initApp(leaferContainer.value as HTMLElement, configApp.value)
   // before select
   beforeSelect(app.value as App, (target) => {
     if (target && !Array.isArray(target)) {
-      console.log(target)
-
       selectedTarget.value = target
       properties.value = Object.entries(target.toJSON()).map(
         ([key, value]) => ({
@@ -334,8 +346,15 @@ onMounted(() => {
 
   // on contextmenu
   onContextmenu(app.value as App, (e: MouseEvent) => {
-    const target = app.value?.editor.target
-    if (target && !Array.isArray(target)) {
+    const { left, top } =
+      leaferContainer.value?.getBoundingClientRect() as DOMRect
+    const point = {
+      x: e.clientX - left,
+      y: e.clientY - top,
+    }
+    const result = app.value?.pick(point)
+    if (result && result.target) {
+      selectedTarget.value = result.target as IUI
       isShowRightMenu.value = true
       rightMenuPosition.value.x = e.clientX
       rightMenuPosition.value.y = e.clientY
@@ -377,12 +396,15 @@ onMounted(() => {
         <el-button type="primary" @click="exportSelectedJson(exportJsonName)"
           >export selected</el-button
         >
-        <el-button type="primary" v-if="!isOpenEditor" @click="codeEditorDraw"
+        <el-button
+          type="primary"
+          v-if="!isOpenEditorEngine"
+          @click="codeEditorDraw"
           >open editor</el-button
         >
         <el-button
           type="primary"
-          v-if="isOpenEditor"
+          v-if="isOpenEditorEngine"
           @click="exitCodeEditorDraw"
           >exit editor</el-button
         >
@@ -391,7 +413,7 @@ onMounted(() => {
     <el-main>
       <el-splitter lazy>
         <el-splitter-panel
-          v-if="!isOpenEditor"
+          v-if="!isOpenEditorEngine"
           :collapsible="true"
           :min="configLayout.min"
           :size="configLayout.size"
@@ -431,7 +453,7 @@ onMounted(() => {
           </el-tabs>
         </el-splitter-panel>
         <el-splitter-panel
-          v-else="isOpenEditor"
+          v-else="isOpenEditorEngine"
           :collapsible="true"
           :min="configLayout.min"
           :size="configLayout.size"
@@ -449,66 +471,22 @@ onMounted(() => {
             @toTop="toTop"
             @toBottom="toBottom"
             @deleteElement="deleteElement"
+            @openEdit="openEdit"
+            @closeEdit="closeEdit"
           />
         </el-splitter-panel>
         <el-splitter-panel :collapsible="true" min="300" size="400" max="400">
-          <RectProperty
-            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Rect"
+          <ElementProperty
+            v-if="selectedTarget"
             :data="properties"
             @update:data="updateData"
           />
-          <EllipseProperty
-            v-if="
-              selectedTarget && selectedTarget.tag === ShapeTypeEnum.Ellipse
-            "
-            :data="properties"
-            @update:data="updateData"
+
+          <FilterConfig
+            v-if="isShowFilterConfig"
+            @confirmFilter="confirmFilter"
+            @cancelFilter="cancelFilter"
           />
-          <LineProperty
-            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Line"
-            :data="properties"
-            @update:data="updateData"
-          />
-          <PolygonProperty
-            v-if="
-              selectedTarget && selectedTarget.tag === ShapeTypeEnum.Polygon
-            "
-            :data="properties"
-            @update:data="updateData"
-          />
-          <StarProperty
-            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Star"
-            :data="properties"
-            @update:data="updateData"
-          />
-          <PathProperty
-            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Path"
-            :data="properties"
-            @update:data="updateData"
-          />
-          <ImageProperty
-            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Image"
-            :data="properties"
-            @update:data="updateData"
-          />
-          <TextProperty
-            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Text"
-            :data="properties"
-            @update:data="updateData"
-          />
-          <ArrowProperty
-            v-if="selectedTarget && selectedTarget.tag === ShapeTypeEnum.Arrow"
-            :data="properties"
-            @update:data="updateData"
-          />
-          <HTMLProperty
-            v-if="
-              selectedTarget && selectedTarget.tag === ShapeTypeEnum.HTMLText
-            "
-            :data="properties"
-            @update:data="updateData"
-          />
-          <FilterConfig v-if="isShowFilterConfig" @confirmFilter="confirmFilter" />
         </el-splitter-panel>
       </el-splitter>
     </el-main>

@@ -7,7 +7,7 @@ defineProps<{
   }
 }>()
 
-const emits = defineEmits(['toTopByOne', 'toBottomByOne', 'toTop', 'toBottom', 'deleteElement'])
+const emits = defineEmits(['toTopByOne', 'toBottomByOne', 'toTop', 'toBottom', 'deleteElement', 'openEdit', 'closeEdit'])
 
 const toTopByOne = () => {
   emits('toTopByOne')
@@ -28,6 +28,14 @@ const toBottom = () => {
 const deleteElement = () => {
   emits('deleteElement')
 }
+
+const openEdit = () => {
+  emits('openEdit')
+}
+
+const closeEdit = () => {
+  emits('closeEdit')
+}
 </script>
 
 <template>
@@ -45,19 +53,25 @@ const deleteElement = () => {
     </template>
     <ul>
       <li>
-        <el-button type="primary" plain @click="toTopByOne">上移</el-button>
+        <el-button type="primary" plain @click="toTopByOne">toTopByOne</el-button>
       </li>
       <li>
-        <el-button type="primary" plain @click="toBottomByOne">下移</el-button>
+        <el-button type="primary" plain @click="toBottomByOne">toBottomByOne</el-button>
       </li>
       <li>
-        <el-button type="primary" plain @click="toTop">上移到顶部</el-button>
+        <el-button type="primary" plain @click="toTop">toTop</el-button>
       </li>
       <li>
-        <el-button type="primary" plain @click="toBottom">下移到底部</el-button>
+        <el-button type="primary" plain @click="toBottom">toBottom</el-button>
       </li>
       <li>
-        <el-button type="primary" plain @click="deleteElement">删除</el-button>
+        <el-button type="primary" plain @click="openEdit">openEdit</el-button>
+      </li>
+      <li>
+        <el-button type="primary" plain @click="closeEdit">closeEdit</el-button>
+      </li>
+      <li>
+        <el-button type="primary" plain @click="deleteElement">deleteElement</el-button>
       </li>
     </ul>
   </el-card>

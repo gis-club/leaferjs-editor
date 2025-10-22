@@ -1,4 +1,4 @@
-export const ShapeType = {
+export const ShapeEnum = {
   Rect: 'Rect',
   Ellipse: 'Ellipse',
   Line: 'Line',
@@ -11,4 +11,4 @@ export const ShapeType = {
   HTMLText: 'HTMLText',
 } as const
 
-export type ShapeType = (typeof ShapeType)[keyof typeof ShapeType]
+export type ShapeEnum = (typeof ShapeEnum)[keyof typeof ShapeEnum]
