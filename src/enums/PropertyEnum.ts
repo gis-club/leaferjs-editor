@@ -1,13 +1,12 @@
 export const ColorEnum = {
-  stroke: 'stroke',
-  fill: 'fill',
+
 } as const
 
 export type ColorEnum = (typeof ColorEnum)[keyof typeof ColorEnum]
 
 export const BooleanEnum = {
   editable: 'editable',
-  italic: 'italic'
+  italic: 'italic',
 } as const
 
 export type BooleanEnum = (typeof BooleanEnum)[keyof typeof BooleanEnum]
@@ -27,31 +26,41 @@ export const JsonEnum = {
   lineHeight: 'lineHeight',
   filter: 'filter',
   textDecoration: 'textDecoration',
+  stroke: 'stroke',
+  fill: 'fill',
 } as const
 
 export type JsonEnum = (typeof JsonEnum)[keyof typeof JsonEnum]
 
 export const SelectEnum = {
-  strokeCap: [{
-    label: 'round',
-    value: 'round',
-  }, {
-    label: 'square',
-    value: 'square',
-  }, {
-    label: 'none',
-    value: 'none',
-    }],
-  strokeJoin: [{
-    label: 'round',
-    value: 'round',
-  }, {
-    label: 'square',
-    value: 'square',
-  }, {
-    label: 'none',
-    value: 'none',
-  }],
+  strokeCap: [
+    {
+      label: 'round',
+      value: 'round',
+    },
+    {
+      label: 'square',
+      value: 'square',
+    },
+    {
+      label: 'none',
+      value: 'none',
+    },
+  ],
+  strokeJoin: [
+    {
+      label: 'round',
+      value: 'round',
+    },
+    {
+      label: 'bevel',
+      value: 'bevel',
+    },
+    {
+      label: 'miter',
+      value: 'miter',
+    }
+  ],
 }
 
 export type SelectEnum = (typeof SelectEnum)[keyof typeof SelectEnum]

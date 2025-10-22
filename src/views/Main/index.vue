@@ -8,6 +8,7 @@ import { type IAppConfig, type App, type IUI } from 'leafer-ui'
 import RightMenu from '@/components/RightMenu.vue'
 import FilterConfig from '@/components/FilterConfig.vue'
 import ElementProperty from '@/components/properties/ElementProperty.vue'
+import StrokeConfig from '@/components/StrokeConfig.vue'
 
 import {
   initApp,
@@ -50,6 +51,9 @@ const isOpenEditorEngine = ref(false)
 
 // filter config
 const isShowFilterConfig = ref(false)
+
+// stroke config
+const isShowStrokeConfig = ref(false)
 
 // change fill
 const changeFill = (color: string) => {
@@ -122,6 +126,27 @@ const addFilter = () => {
   }
 }
 
+// add stroke
+const addStroke = () => {
+  isShowStrokeConfig.value = true
+}
+
+// confirm stroke
+const confirmStroke = (form: any) => {
+  isShowStrokeConfig.value = false
+  const target = selectedTarget.value as IUI
+  if (target) {
+    target.stroke = [
+    {type: 'solid', color: 'white'},
+    {type: 'solid', color: 'black', style: {  dashPattern: [3, 3], strokeWidth: 10, st }} // 第二个描边为虚线
+]
+  }
+}
+
+// cancel stroke
+const cancelStroke = () => {
+  isShowStrokeConfig.value = false  
+}
 // code editor draw
 const toggleCodeEditorDraw = () => {
   isOpenEditorEngine.value = !isOpenEditorEngine.value
@@ -206,6 +231,7 @@ onMounted(() => {
     <el-header>
       <div class="header-center">
         <el-button type="primary" @click="addFilter">add filter</el-button>
+        <el-button type="primary" @click="addStroke">add stroke</el-button>
       </div>
       <div class="header-right">
         <div>
@@ -278,6 +304,12 @@ onMounted(() => {
             v-if="isShowFilterConfig"
             @confirmFilter="confirmFilter"
             @cancelFilter="cancelFilter"
+          />
+
+          <StrokeConfig
+            v-if="isShowStrokeConfig"
+            @confirmStroke="confirmStroke"
+            @cancelStroke="cancelStroke"
           />
         </el-splitter-panel>
       </el-splitter>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {defineProps} from 'vue'
+import {defineProps, watch} from 'vue'
 import { ColorEnum, BooleanEnum, JsonEnum, StringEnum, SelectEnum } from '../../enums/PropertyEnum'
 
 const emits = defineEmits(['update:data'])
@@ -15,12 +15,18 @@ const updateData = (row: { name: string, value: any }) => {
   emits('update:data', row)
 }
 
+watch(
+  () => props.data,
+  (newVal) => {
+    console.log(newVal)
+  }
+)
 
 </script>
 
 <template>
   <el-table :data="data" stripe style="width: 100%">
-    <el-table-column prop="name" label="属性名" width="180"/>
+    <el-table-column prop="name" label="属性名" width="80"/>
     <el-table-column prop="value" label="属性值" >
       <template #default="{ row }">
         <el-input v-if="row.name === 'tag'" disabled v-model="row.value" @change="updateData(row)" />
@@ -38,6 +44,11 @@ const updateData = (row: { name: string, value: any }) => {
         </el-select>
 
         <el-input v-else type="number" v-model="row.value" @change="updateData({name: row.name, value: Number(row.value)})" />
+      </template>
+    </el-table-column>
+    <el-table-column  label="操作" width="90">
+      <template #default="{ row }">
+        <el-button type="primary" @click="editData(row)">编辑</el-button>
       </template>
     </el-table-column>
   </el-table>

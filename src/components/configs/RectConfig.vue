@@ -9,7 +9,10 @@ const form = reactive({
   height: 200, // 高度
   cornerRadius: [0, 0, 0, 0], // 圆角
   isAll: true, // 是否全圆角
-  fill: '#32cd79', // 填充颜色
+  fill: {
+        type: 'solid',
+        color: '#32cd79'
+    }, // 填充颜色
   editable: true, // 是否可编辑
 })
 
