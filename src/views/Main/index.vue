@@ -136,10 +136,6 @@ const confirmStroke = (form: any) => {
   isShowStrokeConfig.value = false
   const target = selectedTarget.value as IUI
   if (target) {
-    target.stroke = [
-    {type: 'solid', color: 'white'},
-    {type: 'solid', color: 'black', style: {  dashPattern: [3, 3], strokeWidth: 10, st }} // 第二个描边为虚线
-]
   }
 }
 
