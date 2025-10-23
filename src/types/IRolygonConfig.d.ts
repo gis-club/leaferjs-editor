@@ -4,7 +4,7 @@ declare global {
     height: number
     sides: number
     curve: number
-    cornerRadius:  number
+    cornerRadius:  number[]
     fill: string,
     editable: boolean,
   }

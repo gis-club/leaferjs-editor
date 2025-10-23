@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
+import CornerRadiusConfig from '../CornerRadiusConfig.vue'
 
 const emit = defineEmits(['createElement'])
 
@@ -10,7 +11,7 @@ const form = reactive({
   fill: '#32cd79', // 填充颜色
   corners: 3, // 边数
   innerRadius: 0.2, // 内圆半径
-  cornerRadius: 0, // 圆角
+  cornerRadius: [0, 0, 0, 0], // 圆角
   editable: true, // 是否可编辑
 })
 
@@ -38,9 +39,7 @@ const onSubmit = () => {
     <el-form-item label="Inner Radius">
       <el-input type="number" :min="0" :max="1" v-model="form.innerRadius" />
     </el-form-item>
-    <el-form-item label="Corner Radius">
-      <el-input type="number" :min="0" v-model="form.cornerRadius" />
-    </el-form-item>
+    <CornerRadiusConfig :cornerRadius="form.cornerRadius" />
     <el-form-item label="Editable">
       <el-switch inline-prompt active-text="是" inactive-text="否" v-model="form.editable" />
     </el-form-item>

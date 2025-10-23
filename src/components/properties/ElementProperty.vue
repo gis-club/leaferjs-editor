@@ -46,11 +46,6 @@ watch(
         <el-input v-else type="number" v-model="row.value" @change="updateData({name: row.name, value: Number(row.value)})" />
       </template>
     </el-table-column>
-    <el-table-column  label="操作" width="90">
-      <template #default="{ row }">
-        <el-button type="primary" @click="editData(row)">编辑</el-button>
-      </template>
-    </el-table-column>
   </el-table>
 </template>
 

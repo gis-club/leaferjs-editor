@@ -5,7 +5,7 @@ declare global {
     rotation: number
     curve: number
     close: boolean
-    cornerRadius: number
+    cornerRadius: number[]
     strokeWidth: number
     stroke: string,
     editable: boolean,

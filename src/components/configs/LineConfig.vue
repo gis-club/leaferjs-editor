@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
+import CornerRadiusConfig from '../CornerRadiusConfig.vue'
 
 const emit = defineEmits(['createElement'])
 
@@ -11,7 +12,7 @@ const form = reactive({
   rotation: 0, // 旋转
   close: false, // 是否闭合
   curve: 0, // 是否曲线
-  cornerRadius: 0, // 圆角
+  cornerRadius: [0, 0, 0, 0], // 圆角
   strokeWidth: 1, // 线宽
   editable: true, // 是否可编辑
 })
@@ -45,9 +46,7 @@ const onSubmit = () => {
     <el-form-item label="Curve">
       <el-input type="number" :min="0" :max="1" v-model="form.curve" />
     </el-form-item>
-    <el-form-item label="Corner Radius">
-      <el-input type="number" :min="0" v-model="form.cornerRadius" />
-    </el-form-item>
+    <CornerRadiusConfig :cornerRadius="form.cornerRadius" />
     <el-form-item label="Stroke Width">
       <el-input type="number" :min="0" v-model="form.strokeWidth" />
     </el-form-item>

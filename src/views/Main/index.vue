@@ -319,7 +319,6 @@ onMounted(() => {
 
 <style scoped>
 .el-container {
-  background-color: #2e2e2e;
   width: 100%;
   height: 100%;
   color: #fff;
@@ -347,13 +346,6 @@ onMounted(() => {
   }
 }
 
-.el-main {
-  background-color: #000000;
-}
-
-.el-splitter {
-  background-color: #444343;
-}
 
 #leafer-container {
   width: 100%;
