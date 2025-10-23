@@ -64,3 +64,26 @@ export const SelectEnum = {
 }
 
 export type SelectEnum = (typeof SelectEnum)[keyof typeof SelectEnum]
+
+export const FillTypeEnum = {
+  solid: 'solid', // 纯色填充
+  linear: 'linear', // 线性渐变
+  radial: 'radial', // 径向渐变
+  angular: 'angular', // 角度渐变
+  image: 'image', // 图像填充
+} as const
+
+export type FillTypeEnum = (typeof FillTypeEnum)[keyof typeof FillTypeEnum]
+
+export const AlignEnum = {
+  center: 'center',
+  'top-left': 'top-left',
+  top: 'top',
+  'top-right': 'top-right',
+  right: 'right',
+  'bottom-right': 'bottom-right',
+  bottom: 'bottom',
+  'bottom-left': 'bottom-left',
+  left: 'left',
+} as const
+export type AlignEnum = (typeof AlignEnum)[keyof typeof AlignEnum]

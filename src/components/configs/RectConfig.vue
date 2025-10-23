@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import CornerRadiusConfig from '../CornerRadiusConfig.vue'
+import FillConfig from './FillConfig/index.vue'
 
 const emit = defineEmits(['createElement'])
-
+const fillConfig = ref<InstanceType<typeof FillConfig>>()
 // do not use same name with ref
 const form = reactive<IRectConfig>({
   width: 200, // 宽度
@@ -16,6 +17,10 @@ const form = reactive<IRectConfig>({
 const onSubmit = () => {
   emit('createElement', form)
 }
+
+const openFillConfig = () => {
+  fillConfig.value?.openDialog()
+}
 </script>
 
 <template>
@@ -25,6 +30,8 @@ const onSubmit = () => {
     </el-form-item>
     <el-form-item label="Height">
       <el-input type="number" :min="1" v-model="form.height" />
+      
+      <el-button type="primary" @click="openFillConfig">Fill Config</el-button>
     </el-form-item>
     <CornerRadiusConfig :cornerRadius="form.cornerRadius" />
     <el-form-item class="fill-config">
@@ -46,6 +53,7 @@ const onSubmit = () => {
       <el-button>Cancel</el-button>
     </el-form-item>
   </el-form>
+  <FillConfig ref="fillConfig" :fill="form.fill" />
 </template>
 
 <style scoped>
