@@ -136,6 +136,8 @@ const confirmStroke = (form: any) => {
   isShowStrokeConfig.value = false
   const target = selectedTarget.value as IUI
   if (target) {
+    console.log(form);
+    
   }
 }
 
