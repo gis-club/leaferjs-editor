@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
+import { createPinia } from 'pinia'
 
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
@@ -13,4 +14,4 @@ import '@leafer-in/export' // 导入导出插件
 import '@leafer-in/text-editor' // 导入文本编辑插件
 import '@leafer-in/filter'  // 导入滤镜插件
 
-createApp(App).use(ElementPlus).mount('#app')
+createApp(App).use(ElementPlus).use(createPinia()).mount('#app')

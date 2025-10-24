@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, useTemplateRef, onMounted, shallowRef, provide } from 'vue'
-import { useDark } from '@vueuse/core'
+import { ref, useTemplateRef, onMounted, shallowRef, provide, watch } from 'vue'
+import { useDark, useToggle } from '@vueuse/core'
 import { Sunny, Moon } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { type IAppConfig, type App, type IUI } from 'leafer-ui'
@@ -191,6 +191,14 @@ const closeEdit = () => {
   }
 }
 
+const toggleDark = (value: boolean) => {
+  if (value) {
+    ruler.value?.changeTheme('dark2')
+  } else {
+    ruler.value?.changeTheme('light')
+  }
+}
+
 // on mounted
 onMounted(() => {
   app.value = initApp(leaferContainer.value as HTMLElement, configApp.value)
@@ -233,19 +241,19 @@ onMounted(() => {
   ruler.value = new Ruler(app.value, {
     enabled: true,
     ruleSize: 20,
-    theme: 'dark',
   })
-  ruler.value?.addTheme('dark', {
+  ruler.value?.addTheme('dark2', {
     backgroundColor: '#16161a',
     textColor: 'rgba(255, 255, 255, 0.5)',
     borderColor: '#686868',
     highlightColor: 'rgba(0, 102, 255, 0.5)',
   })
-  ruler.value?.changeTheme('dark')
+  ruler.value?.changeTheme('dark2')
 
   snap.value = new Snap(app.value)
   snap.value?.enable(true)
 })
+
 </script>
 
 <template>
@@ -265,10 +273,11 @@ onMounted(() => {
           />
         </div>
         <el-switch
-          size="small"
+          size="large"
           v-model="isDark"
           :active-action-icon="Moon"
           :inactive-action-icon="Sunny"
+          @change="toggleDark"
         />
         <el-button type="primary" @click="selectedFileJson">import</el-button>
         <el-button type="primary" @click="exportImage(exportImageName)"
