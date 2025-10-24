@@ -23,8 +23,11 @@ import { beforeSelect, onContextmenu } from '@/utils/event'
 
 import ElementConfig from '@/pages/ElementConfig/index.vue'
 
+import { Ruler } from 'leafer-x-ruler'
+
 const isDark = useDark()
 const app = shallowRef<App>()
+const ruler = shallowRef<Ruler>()
 
 const leaferContainer = useTemplateRef('leaferContainer')
 const exportImageName = ref('image')
@@ -136,14 +139,13 @@ const confirmStroke = (form: any) => {
   isShowStrokeConfig.value = false
   const target = selectedTarget.value as IUI
   if (target) {
-    console.log(form);
-    
+    console.log(form)
   }
 }
 
 // cancel stroke
 const cancelStroke = () => {
-  isShowStrokeConfig.value = false  
+  isShowStrokeConfig.value = false
 }
 // code editor draw
 const toggleCodeEditorDraw = () => {
@@ -221,6 +223,19 @@ onMounted(() => {
       isShowRightMenu.value = false
     }
   })
+
+  ruler.value = new Ruler(app.value, {
+    enabled: true,
+    ruleSize: 20,
+    theme: 'dark',
+  })
+  ruler.value?.addTheme('dark', {
+    backgroundColor: '#16161a',
+    textColor: 'rgba(255, 255, 255, 0.5)',
+    borderColor: '#686868',
+    highlightColor: 'rgba(0, 102, 255, 0.5)',
+  })
+  ruler.value?.changeTheme('dark')
 })
 </script>
 
@@ -343,7 +358,6 @@ onMounted(() => {
     grid-column: 3;
   }
 }
-
 
 #leafer-container {
   width: 100%;
