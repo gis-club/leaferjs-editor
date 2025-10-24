@@ -1,3 +1,5 @@
+import type { IFillConfig } from "@/interfaces/IFillConfig"
+
 declare global {
   interface IPolygonConfig {
     width: number
@@ -5,7 +7,7 @@ declare global {
     sides: number
     curve: number
     cornerRadius:  number[]
-    fill: string,
+    fill: IFillConfig[],
     editable: boolean,
   }
 }

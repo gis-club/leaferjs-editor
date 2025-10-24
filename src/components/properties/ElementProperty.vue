@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {defineProps, watch} from 'vue'
+import {defineProps} from 'vue'
 import { ColorEnum, BooleanEnum, JsonEnum, StringEnum, SelectEnum } from '../../enums/PropertyEnum'
 
 const emits = defineEmits(['update:data'])
@@ -14,13 +14,6 @@ const props = defineProps({
 const updateData = (row: { name: string, value: any }) => {
   emits('update:data', row)
 }
-
-watch(
-  () => props.data,
-  (newVal) => {
-    console.log(newVal)
-  }
-)
 
 </script>
 

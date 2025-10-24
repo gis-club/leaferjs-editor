@@ -1,9 +1,11 @@
+import type { IFillConfig } from "@/interfaces/IFillConfig"
+
 declare global {
   interface IRectConfig {
     width: number
     height: number
     cornerRadius: number[]
-    fill: string,
+    fill: IFillConfig[],
     editable: boolean,
   }
 }

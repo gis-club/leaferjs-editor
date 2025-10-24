@@ -1,3 +1,5 @@
+import type { IFillConfig } from "@/interfaces/IFillConfig"
+
 declare global {
   interface IEllipseConfig {
     width: number
@@ -5,7 +7,7 @@ declare global {
     startAngle: number
     endAngle: number
     innerRadius: number
-    fill: string,
+    fill: IFillConfig[],
     editable: boolean,
   }
 }

@@ -1,7 +1,21 @@
-import { Arrow } from "@leafer-in/arrow"
-import { App, PropertyEvent, Rect, Text, Image, Polygon, Ellipse, Line, Star, Path, type IUI, type IStrokeCap, type IStrokeJoin } from "leafer-ui"
-import { HTMLText } from "@leafer-in/html"
-import type { Ref } from "vue"
+import { Arrow } from '@leafer-in/arrow'
+import {
+  App,
+  PropertyEvent,
+  Rect,
+  Text,
+  Image,
+  Polygon,
+  Ellipse,
+  Line,
+  Star,
+  Path,
+  type IUI,
+  type IStrokeCap,
+  type IStrokeJoin,
+} from 'leafer-ui'
+import { HTMLText } from '@leafer-in/html'
+import type { Ref } from 'vue'
 
 /**
  * @description 获取元素位置
@@ -22,7 +36,10 @@ const getXY = (container: Element, width: number = 0, height: number = 0) => {
  * @param element 元素
  * @param properties 属性
  */
-const getElementProperties = (element: IUI, properties: Ref<{name: string, value: any}[]>) => {
+const getElementProperties = (
+  element: IUI,
+  properties: Ref<{ name: string; value: any }[]>
+) => {
   element.on(PropertyEvent.CHANGE, () => {
     properties.value = Object.entries(element.toJSON()).map(([key, value]) => ({
       name: key,
@@ -32,7 +49,12 @@ const getElementProperties = (element: IUI, properties: Ref<{name: string, value
 }
 
 // 创建矩形
-export const createRect = (config: IRectConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
+export const createRect = (
+  config: IRectConfig,
+  app: App,
+  container: Element,
+  properties: Ref<{ name: string; value: any }[]>
+) => {
   let { width, height, cornerRadius, fill, editable } = config
   if (!Array.isArray(cornerRadius)) {
     cornerRadius = [
@@ -54,17 +76,31 @@ export const createRect = (config: IRectConfig, app: App, container: Element, pr
       cornerRadius: cornerRadius,
     },
     x,
-    y,
+    y
   )
   app.tree.add(rect)
 
   getElementProperties(rect, properties)
-
 }
 
 // 创建文本
-export const createText = (config: ITextConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
-  const { width, height, text, fill, editable, fontSize, fontWeight, italic, textDecoration } = config
+export const createText = (
+  config: ITextConfig,
+  app: App,
+  container: Element,
+  properties: Ref<{ name: string; value: any }[]>
+) => {
+  const {
+    width,
+    height,
+    text,
+    fill,
+    editable,
+    fontSize,
+    fontWeight,
+    italic,
+    textDecoration,
+  } = config
 
   const { x, y } = getXY(container, width, height)
 
@@ -81,28 +117,33 @@ export const createText = (config: ITextConfig, app: App, container: Element, pr
       textDecoration: textDecoration,
     },
     x,
-    y,
+    y
   )
   app.tree.add(leaferText)
 
   getElementProperties(leaferText, properties)
-
 }
 
 // 创建图片
-export const createImage = (config: IImageConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
+export const createImage = (
+  config: IImageConfig,
+  app: App,
+  container: Element,
+  properties: Ref<{ name: string; value: any }[]>
+) => {
   const { width, height, url, editable } = config
 
   const { x, y } = getXY(container, width, height)
 
-  const image = Image.one({
-    editable: editable,
-    width: Number(width) === 0 ? undefined : Number(width),
-    height: Number(height) === 0 ? undefined : Number(height),
-    url: url,
-  },
-  x,
-  y,
+  const image = Image.one(
+    {
+      editable: editable,
+      width: Number(width) === 0 ? undefined : Number(width),
+      height: Number(height) === 0 ? undefined : Number(height),
+      url: url,
+    },
+    x,
+    y
   )
   app.tree.add(image)
 
@@ -110,157 +151,222 @@ export const createImage = (config: IImageConfig, app: App, container: Element, 
 }
 
 // 创建多边形
-export const createPolygon = (config: IPolygonConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
+export const createPolygon = (
+  config: IPolygonConfig,
+  app: App,
+  container: Element,
+  properties: Ref<{ name: string; value: any }[]>
+) => {
   const { width, height, sides, curve, cornerRadius, fill, editable } = config
 
   const { x, y } = getXY(container, width, height)
 
-  const polygon = Polygon.one({
-    width: Number(width),
-    height: Number(height),
-    sides: Number(sides),
-    curve: Number(curve),
-    cornerRadius: cornerRadius,
-    fill: fill,
-    editable: editable,
-  },
-  x,
-  y,
+  const polygon = Polygon.one(
+    {
+      width: Number(width),
+      height: Number(height),
+      sides: Number(sides),
+      curve: Number(curve),
+      cornerRadius: cornerRadius,
+      fill: fill,
+      editable: editable,
+    },
+    x,
+    y
   )
   app.tree.add(polygon)
   getElementProperties(polygon, properties)
 }
 
-export const createEllipse = (config: IEllipseConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
-  const { width, height, startAngle, endAngle, innerRadius, fill, editable } = config
+export const createEllipse = (
+  config: IEllipseConfig,
+  app: App,
+  container: Element,
+  properties: Ref<{ name: string; value: any }[]>
+) => {
+  const { width, height, startAngle, endAngle, innerRadius, fill, editable } =
+    config
 
   const { x, y } = getXY(container, width, height)
 
-  const ellipse = Ellipse.one({
-    width: Number(width),
-    height: Number(height),
-    startAngle: Number(startAngle),
-    endAngle: Number(endAngle),
-    innerRadius: Number(innerRadius),
-    fill: fill,
-    editable: editable,
-  },
-  x,
-  y,
+  const ellipse = Ellipse.one(
+    {
+      width: Number(width),
+      height: Number(height),
+      startAngle: Number(startAngle),
+      endAngle: Number(endAngle),
+      innerRadius: Number(innerRadius),
+      fill: fill,
+      editable: editable,
+    },
+    x,
+    y
   )
   app.tree.add(ellipse)
   getElementProperties(ellipse, properties)
-} 
+}
 
-export const createLine = (config: ILineConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
-  const { width, points, rotation, close, curve, cornerRadius, stroke, strokeWidth, editable } = config
+export const createLine = (
+  config: ILineConfig,
+  app: App,
+  container: Element,
+  properties: Ref<{ name: string; value: any }[]>
+) => {
+  const {
+    width,
+    points,
+    rotation,
+    close,
+    curve,
+    cornerRadius,
+    stroke,
+    strokeWidth,
+    editable,
+  } = config
 
   const { x, y } = getXY(container, width)
 
-  const line = Line.one({
-    width: Number(width),
-    points: points,
-    rotation: Number(rotation),
-    close: close,
-    curve: Number(curve),
-    cornerRadius: cornerRadius,
-    stroke: stroke,
-    strokeWidth: strokeWidth,
-    editable: editable,
-  },
-  x,
-  y,
+  const line = Line.one(
+    {
+      width: Number(width),
+      points: points,
+      rotation: Number(rotation),
+      close: close,
+      curve: Number(curve),
+      cornerRadius: cornerRadius,
+      stroke: stroke,
+      strokeWidth: strokeWidth,
+      editable: editable,
+    },
+    x,
+    y
   )
   app.tree.add(line)
   getElementProperties(line, properties)
-} 
+}
 
-export const createStar = (config: IStarConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
-  const { width, height, corners, innerRadius, cornerRadius, fill, editable } = config
+export const createStar = (
+  config: IStarConfig,
+  app: App,
+  container: Element,
+  properties: Ref<{ name: string; value: any }[]>
+) => {
+  const { width, height, corners, innerRadius, cornerRadius, fill, editable } =
+    config
 
   const { x, y } = getXY(container, width, height)
 
-  const star = Star.one({
-    width: Number(width),
-    height: Number(height),
-    corners: Number(corners),
-    innerRadius: Number(innerRadius),
-    cornerRadius: cornerRadius,
-    fill: fill,
-    editable: editable,
-  },
-  x,
-  y,
+  const star = Star.one(
+    {
+      width: Number(width),
+      height: Number(height),
+      corners: Number(corners),
+      innerRadius: Number(innerRadius),
+      cornerRadius: cornerRadius,
+      fill: fill,
+      editable: editable,
+    },
+    x,
+    y
   )
   app.tree.add(star)
   getElementProperties(star, properties)
 }
 
-export const createPath = (config: IPathConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
+export const createPath = (
+  config: IPathConfig,
+  app: App,
+  container: Element,
+  properties: Ref<{ name: string; value: any }[]>
+) => {
   const { path, windingRule, scale, fill, editable } = config
 
   const { x, y } = getXY(container)
 
-  const leaferPath = Path.one({
-    path: path,
-    windingRule: windingRule,
-    scale: scale,
-    fill: fill,
-    editable: editable,
-  },
-  x,
-  y,
+  const leaferPath = Path.one(
+    {
+      path: path,
+      windingRule: windingRule,
+      scale: scale,
+      fill: fill,
+      editable: editable,
+    },
+    x,
+    y
   )
   app.tree.add(leaferPath)
   getElementProperties(leaferPath, properties)
 }
 
-export const createArrow = (config: IArrowConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
-  const { x: offsetX, y: offsetY, strokeCap, strokeJoin, strokeWidth, stroke, editable } = config
+export const createArrow = (
+  config: IArrowConfig,
+  app: App,
+  container: Element,
+  properties: Ref<{ name: string; value: any }[]>
+) => {
+  const {
+    x: offsetX,
+    y: offsetY,
+    strokeCap,
+    strokeJoin,
+    strokeWidth,
+    stroke,
+    editable,
+  } = config
 
   const { x, y } = getXY(container)
 
-  const arrow = Arrow.one({
-    x: Number(offsetX),
-    y: Number(offsetY),
-    strokeCap: strokeCap as unknown as IStrokeCap,
-    strokeJoin: strokeJoin as unknown as IStrokeJoin,
-    strokeWidth: Number(strokeWidth),
-    stroke: stroke,
-    editable: editable,
-  },
-  x,
-  y,
+  const arrow = Arrow.one(
+    {
+      x: Number(offsetX),
+      y: Number(offsetY),
+      strokeCap: strokeCap as unknown as IStrokeCap,
+      strokeJoin: strokeJoin as unknown as IStrokeJoin,
+      strokeWidth: Number(strokeWidth),
+      stroke: stroke,
+      editable: editable,
+    },
+    x,
+    y
   )
   app.tree.add(arrow)
   getElementProperties(arrow, properties)
 }
 
-export const createHTML = (config: IHTMLConfig, app: App, container: Element, properties: Ref<{name: string, value: any}[]>) => {
+export const createHTML = (
+  config: IHTMLConfig,
+  app: App,
+  container: Element,
+  properties: Ref<{ name: string; value: any }[]>
+) => {
   const { x: offsetX, y: offsetY, text, editable } = config
 
   const { x, y } = getXY(container)
-  
-  const html = HTMLText.one({
-    x: Number(offsetX),
-    y: Number(offsetY),
-    text: text,
-    editable: editable,
-  },
-  x, y,
+
+  const html = HTMLText.one(
+    {
+      x: Number(offsetX),
+      y: Number(offsetY),
+      text: text,
+      editable: editable,
+    },
+    x,
+    y
   )
 
   getElementProperties(html, properties)
   app.tree.add(html)
 }
 
-
-
 /**
  * @description 创建叶子实例
  * @param json 叶子json
  */
-export const createLeafer = (json: Array<any> | any, app: App, properties: Ref<{name: string, value: any}[]>) => {
+export const createLeafer = (
+  json: Array<any> | any,
+  app: App,
+  properties: Ref<{ name: string; value: any }[]>
+) => {
   if (Array.isArray(json)) {
     json.forEach((item) => {
       switch (item.tag) {
@@ -285,8 +391,7 @@ export const createLeafer = (json: Array<any> | any, app: App, properties: Ref<{
     json.children.forEach((item: any) => {
       if (item.children.length > 0) {
         createLeafer(item.children, app, properties)
-      } 
+      }
     })
-
   }
 }
