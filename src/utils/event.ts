@@ -1,30 +1,12 @@
 import { EditorEvent } from "@leafer-in/editor";
-import { Box, KeyEvent, type App, PointerEvent, type IUI } from "leafer-ui";
+import { KeyEvent, type App, type IUI } from "leafer-ui";
 
 export const addEvent = (app: App) => { 
-
-  const deleteButton = Box.one({
-    // // 添加移除按钮
-    around: 'center',
-    fill: '#FEB027',
-    cornerRadius: 20,
-    cursor: 'pointer',
-    children: [{ tag: 'Text', fill: 'white', text: '移除', padding: [7, 10] }],
-  })
-
-  app.editor.config.buttonsFixed = true
-  app.editor.buttons.add(deleteButton)
-
-  deleteButton.on(PointerEvent.TAP, () => {
-    app.editor.list.forEach((rect) => rect.remove())
-    app.editor.target = undefined
-  })
 
   app.leafer?.on(KeyEvent.DOWN, (e: KeyEvent) => {
     judgeKey(e.code, app)
   })
 
-  
   app.canvas.view.oncontextmenu = (e: MouseEvent) => {
     e.preventDefault()
     console.log(app.editor.target);

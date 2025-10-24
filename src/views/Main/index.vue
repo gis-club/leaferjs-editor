@@ -47,7 +47,12 @@ const rightMenuPosition = ref({
 // config app
 const configApp = ref<IAppConfig>({
   fill: '#6a6868',
-  editor: {},
+  editor: {
+    point: { cornerRadius: 0 },
+    middlePoint: {},
+    circle: { width: 16, height: 16 },
+    rect: { dashPattern: [3, 2] },
+  },
 })
 
 // is open editor engine
