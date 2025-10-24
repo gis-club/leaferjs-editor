@@ -4,6 +4,8 @@ import { useDark } from '@vueuse/core'
 import { Sunny, Moon } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { type IAppConfig, type App, type IUI } from 'leafer-ui'
+import { Ruler } from 'leafer-x-ruler'
+import { Snap } from 'leafer-x-easy-snap'
 
 import RightMenu from '@/components/RightMenu.vue'
 import FilterConfig from '@/components/FilterConfig.vue'
@@ -23,11 +25,10 @@ import { beforeSelect, onContextmenu } from '@/utils/event'
 
 import ElementConfig from '@/pages/ElementConfig/index.vue'
 
-import { Ruler } from 'leafer-x-ruler'
-
 const isDark = useDark()
 const app = shallowRef<App>()
 const ruler = shallowRef<Ruler>()
+const snap = shallowRef<Snap>()
 
 const leaferContainer = useTemplateRef('leaferContainer')
 const exportImageName = ref('image')
@@ -236,6 +237,9 @@ onMounted(() => {
     highlightColor: 'rgba(0, 102, 255, 0.5)',
   })
   ruler.value?.changeTheme('dark')
+
+  snap.value = new Snap(app.value)
+  snap.value?.enable(true)
 })
 </script>
 
