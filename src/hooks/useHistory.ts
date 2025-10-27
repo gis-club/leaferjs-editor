@@ -12,10 +12,7 @@ export function useHistory<T>(baseState: T, max = 10) {
 
   const state = shallowRef(baseState);
   const update = (updater: (draft: T) => any, action: string) => {
-    const [nextState, patches, inversePatches] = produceWithPatches(
-      state.value,
-      updater
-    );
+    const [nextState, patches, inversePatches] = produceWithPatches(state.value, updater) as any;
     state.value = nextState;
     console.log(patches);
     console.log(inversePatches);
@@ -64,8 +61,10 @@ export function useHistory<T>(baseState: T, max = 10) {
   function redo() {
     if (undoStackPointer.value === undoStack.value.length - 1) return;
     undoStackPointer.value++;
-    const patches = undoStack.value[undoStackPointer.value].patches;
-    state.value = applyPatches(state.value, patches);
+    const patches = undoStack.value[undoStackPointer.value]?.patches;
+    if (patches) {
+      state.value = applyPatches(state.value, patches);
+    }
   }
 
   function go(index: number) {
@@ -75,12 +74,12 @@ export function useHistory<T>(baseState: T, max = 10) {
     } else if (index < undoStackPointer.value) {
       for (let i = index + 1; i <= undoStackPointer.value; i++) {
         const element = undoStack.value[i];
-        res.unshift(...element.inversePatches);
+        if (element) res.unshift(...element.inversePatches);
       }
     } else {
       for (let i = undoStackPointer.value + 1; i <= index; i++) {
         const element = undoStack.value[i];
-        res.push(...element.patches);
+        if (element) res.push(...element.patches);
       }
     }
 
