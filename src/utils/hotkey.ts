@@ -10,7 +10,7 @@ import type { App } from 'leafer-ui'
 const recordStore = useRecordStore(pinia)
 const appStore = useAppStore(pinia)
 
-hotkeys('ctrl+z', (event, handler) => {
+hotkeys('ctrl+z', (event) => {
   event.preventDefault()
   const patches = recordStore.undo()
   if (patches && patches.length) {

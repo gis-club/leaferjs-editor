@@ -8,7 +8,7 @@ const recordStore = useRecordStore()
 <template>
     <ul>
     <li v-for="(item, index) in recordStore.record" :key="item.id">
-      <span>{{ item.shapeType }} - {{ item.operateType }}</span>
+      <span>{{ item.shapeType }} - {{ item.operateType }} - {{ item.id }} - {{ index  }}</span>
     </li>
   </ul>
 </template>
