@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, useTemplateRef, onMounted, shallowRef, provide, watch } from 'vue'
-import { useDark, useToggle } from '@vueuse/core'
+import { ref, useTemplateRef, onMounted, shallowRef, provide, nextTick } from 'vue'
+import { useDark } from '@vueuse/core'
 import { Sunny, Moon } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import { type IAppConfig, type App, type IUI } from 'leafer-ui'
 import { Ruler } from 'leafer-x-ruler'
 import { Snap } from 'leafer-x-easy-snap'
+import type { SwitchInstance } from 'element-plus'
 
 import RightMenu from '@/components/RightMenu.vue'
 import FilterConfig from '@/components/FilterConfig.vue'
@@ -34,6 +35,7 @@ const leaferContainer = useTemplateRef('leaferContainer')
 const exportImageName = ref('image')
 const exportJsonName = ref('template')
 const selectedTarget = ref<IUI>()
+const switchRef = ref<SwitchInstance>()
 
 const selectedElementProperties = ref<{ name: string; value: any }[]>([])
 provide('selectedElementProperties', selectedElementProperties)
@@ -191,12 +193,65 @@ const closeEdit = () => {
   }
 }
 
-const toggleDark = (value: boolean) => {
+const changeTheme = (value: boolean) => { 
   if (value) {
     ruler.value?.changeTheme('dark2')
   } else {
     ruler.value?.changeTheme('light')
   }
+}
+
+const beforeChange = () => {
+  return new Promise<boolean>((resolve) => {
+    const isAppearanceTransition =
+      // @ts-ignore
+      document.startViewTransition &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (!isAppearanceTransition) {
+      resolve(true)
+      return
+    }
+
+    const switchElement = switchRef.value?.$el
+    const rect = switchElement.getBoundingClientRect()
+    const x = rect.left + rect.width / 2
+    const y = rect.top + rect.height / 2
+
+    const endRadius = Math.hypot(
+      Math.max(x, innerWidth - x),
+      Math.max(y, innerHeight - y)
+    )
+
+    const ratioX = (100 * x) / innerWidth
+    const ratioY = (100 * y) / innerHeight
+    const referR = Math.hypot(innerWidth, innerHeight) / Math.SQRT2
+    const ratioR = (100 * endRadius) / referR
+
+    // @ts-ignore: Transition API
+    const transition = document.startViewTransition(async () => {
+      resolve(true)
+      await nextTick()
+    })
+    transition.ready.then(() => {
+      const clipPath = [
+        `circle(0% at ${ratioX}% ${ratioY}%)`,
+        `circle(${ratioR}% at ${ratioX}% ${ratioY}%)`,
+      ]
+      document.documentElement.animate(
+        {
+          clipPath: isDark.value ? [...clipPath].reverse() : clipPath,
+        },
+        {
+          duration: 400,
+          easing: 'ease-in',
+          fill: 'both',
+          pseudoElement: isDark.value
+            ? '::view-transition-old(root)'
+            : '::view-transition-new(root)',
+        }
+      )
+    })
+  })
 }
 
 // on mounted
@@ -273,11 +328,13 @@ onMounted(() => {
           />
         </div>
         <el-switch
+          ref="switchRef"
           size="large"
           v-model="isDark"
           :active-action-icon="Moon"
           :inactive-action-icon="Sunny"
-          @change="toggleDark"
+          :before-change="beforeChange"
+          @change="changeTheme"
         />
         <el-button type="primary" @click="selectedFileJson">import</el-button>
         <el-button type="primary" @click="exportImage(exportImageName)"
@@ -387,3 +444,4 @@ onMounted(() => {
   height: 100%;
 }
 </style>
+
