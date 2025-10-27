@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia'
 import { useHistory } from '@/hooks/useHistory'
-import { remove as _remove, cloneDeep } from 'lodash'
-
-import { generateId } from '@/utils/nanoid'
+import { remove as _remove } from 'lodash'
 
 type Component = {
   shapeType: string
@@ -11,21 +9,6 @@ type Component = {
   value: any
   [key: string]: any
 }
-
-const defaultItems: Component[] = [
-  {
-    shapeType: 'text',
-    operateType: 'create',
-    id: generateId(),
-    value: null,
-  },
-  {
-    shapeType: 'rect',
-    operateType: 'create',
-    id: generateId(),
-    value: null,
-  },
-]
 
 export const useRecordStore = defineStore('record', () => {
   const {
@@ -138,7 +121,6 @@ export const useRecordStore = defineStore('record', () => {
   function init(delay = 1000) {
     setTimeout(() => {
       enable()
-      record.value = cloneDeep(defaultItems)
     }, delay)
   }
 
