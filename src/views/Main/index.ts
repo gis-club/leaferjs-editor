@@ -12,6 +12,11 @@ import { createLeafer } from '../../utils/element'
 import { addEvent } from '../../utils/event'
 import type { Ref } from 'vue'
 
+import pinia from '@/stores/pinia'
+import { useAppStore } from '@/stores/app'
+
+const appStore = useAppStore(pinia)
+
 // 导入自定义滤镜
 import '../../utils/filter'
 
@@ -24,6 +29,8 @@ export const initApp = (element: HTMLElement, config: IAppConfig): App => {
   })
 
   addEvent(app)
+
+  appStore.setApp(app)
 
   return app
 }

@@ -50,9 +50,9 @@
 <script setup>
 import { reactive } from 'vue';
 import { generateId } from '@/utils/nanoid';
-import { useComponentStore } from '@/stores/componentStore';
+import { useRecordStore } from '@/stores/recordStore';
 
-const editorStore = useComponentStore();
+const editorStore = useRecordStore();
 editorStore.init();
 
 function clear() {

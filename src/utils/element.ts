@@ -18,6 +18,14 @@ import {
 import { HTMLText } from '@leafer-in/html'
 import type { Ref } from 'vue'
 
+import pinia from '@/stores/pinia'
+import { useRecordStore } from '@/stores/recordStore'
+
+import { generateId } from './nanoid'
+
+const recordStore = useRecordStore(pinia)
+recordStore.init()
+
 /**
  * @description 获取元素位置
  * @param {Element} container 容器
@@ -82,6 +90,14 @@ export const createRect = (
   app.tree.add(rect)
 
   getElementProperties(rect, properties)
+
+  const item = {
+    shapeType: 'rect',
+    operateType: 'create',
+    id: generateId(),
+    value: rect,
+  }
+  recordStore.create(item)
 }
 
 // 创建文本
@@ -357,6 +373,10 @@ export const createHTML = (
 
   getElementProperties(html, properties)
   app.tree.add(html)
+}
+
+export const removeElement = (app: App, element: IUI) => {
+  app.tree.remove(element)
 }
 
 /**

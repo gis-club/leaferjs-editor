@@ -25,6 +25,10 @@ import {
 import { beforeSelect, onContextmenu } from '@/utils/event'
 
 import ElementConfig from '@/pages/ElementConfig/index.vue'
+import Text from '@/views/Text.vue'
+import { useRecordStore } from '@/stores/recordStore'
+
+const recordStore = useRecordStore()
 
 const isDark = useDark()
 const app = shallowRef<App>()
@@ -254,6 +258,31 @@ const beforeChange = () => {
   })
 }
 
+// add component
+recordStore.create({
+    type: 'text',
+    name: 'text',
+    texture: '',
+    scaleX: 1,
+    filterList: [],
+  })
+const addComponent = () => {
+  console.log('addComponent')
+  recordStore.create({
+    type: 'react',
+    name: 'react',
+    texture: '',
+    scaleX: 1,
+    filterList: [],
+  })
+}
+
+// remove component
+const removeComponent = () => {
+  console.log('removeComponent')
+  recordStore.findAndRemove('text')
+}
+
 // on mounted
 onMounted(() => {
   app.value = initApp(leaferContainer.value as HTMLElement, configApp.value)
@@ -317,6 +346,8 @@ onMounted(() => {
       <div class="header-center">
         <el-button type="primary" @click="addFilter">add filter</el-button>
         <el-button type="primary" @click="addStroke">add stroke</el-button>
+        <el-button type="primary" @click="addComponent">add component</el-button>
+        <el-button type="primary" @click="removeComponent">remove component</el-button>
       </div>
       <div class="header-right">
         <div>
@@ -399,6 +430,8 @@ onMounted(() => {
             @confirmStroke="confirmStroke"
             @cancelStroke="cancelStroke"
           />
+
+          <Text />
         </el-splitter-panel>
       </el-splitter>
     </el-main>

@@ -17,7 +17,9 @@ export function useHistory<T>(baseState: T, max = 10) {
       updater
     );
     state.value = nextState;
-
+    console.log(patches);
+    console.log(inversePatches);
+    
     if (undoable.value && patches.length && inversePatches.length) {
       const pointer = ++undoStackPointer.value;
       undoStack.value.length = pointer;
@@ -37,6 +39,8 @@ export function useHistory<T>(baseState: T, max = 10) {
         undoStackPointer.value = max - 1;
       }
     }
+
+    console.log(undoStackPointer.value);
   };
 
   function enable(value = true) {
@@ -45,9 +49,16 @@ export function useHistory<T>(baseState: T, max = 10) {
 
   function undo() {
     if (undoStackPointer.value < 0) return;
-    const patches = undoStack.value[undoStackPointer.value].inversePatches;
-    state.value = applyPatches(state.value, patches);
-    undoStackPointer.value--;
+
+    const target = undoStack.value[undoStackPointer.value];
+    if (target) {
+      const patches = target.inversePatches;
+      console.log(patches);
+      state.value = applyPatches(state.value, patches);
+      undoStackPointer.value--;
+      return target.patches
+    }
+    return []
   }
 
   function redo() {

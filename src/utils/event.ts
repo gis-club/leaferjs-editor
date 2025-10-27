@@ -1,18 +1,15 @@
-import { EditorEvent } from "@leafer-in/editor";
-import { KeyEvent, type App, type IUI } from "leafer-ui";
+import { EditorEvent } from '@leafer-in/editor'
+import { KeyEvent, type App, type IUI } from 'leafer-ui'
 
-export const addEvent = (app: App) => { 
-
+export const addEvent = (app: App) => {
   app.leafer?.on(KeyEvent.DOWN, (e: KeyEvent) => {
     judgeKey(e.code, app)
   })
 
   app.canvas.view.oncontextmenu = (e: MouseEvent) => {
     e.preventDefault()
-    console.log(app.editor.target);
-    
+    console.log(app.editor.target)
   }
-  
 }
 
 /**
@@ -24,7 +21,7 @@ export const addEvent = (app: App) => {
 export const onContextmenu = (app: App, callback: (e: MouseEvent) => void) => {
   app.canvas.view.oncontextmenu = (e: MouseEvent) => {
     e.preventDefault()
-    const event = e || window.event;
+    const event = e || window.event
     callback(event as MouseEvent)
   }
 }
@@ -36,7 +33,10 @@ export const onContextmenu = (app: App, callback: (e: MouseEvent) => void) => {
  * @param {Ref<{name: string, value: any}[]>} properties
  * @returns {void}
  */
-export const beforeSelect = (app: App, callback: (target: IUI | IUI[]) => void) => {
+export const beforeSelect = (
+  app: App,
+  callback: (target: IUI | IUI[]) => void
+) => {
   app.editor.on(EditorEvent.BEFORE_SELECT, (e: EditorEvent) => {
     callback(e.value)
   })
@@ -48,7 +48,7 @@ export const beforeSelect = (app: App, callback: (target: IUI | IUI[]) => void) 
  * @param {App} app
  * @returns {void}
  */
-const judgeKey = (code: string, app: App) => { 
+const judgeKey = (code: string, app: App) => {
   switch (code) {
     case 'Delete':
       return handleDelete(app)
