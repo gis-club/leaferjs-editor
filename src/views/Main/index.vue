@@ -3,7 +3,7 @@ import { ref, useTemplateRef, onMounted, shallowRef, provide, nextTick } from 'v
 import { useDark } from '@vueuse/core'
 import { Sunny, Moon } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { type IAppConfig, type App, type IUI, PropertyEvent } from 'leafer-ui'
+import { type IAppConfig, type IUI, PropertyEvent } from 'leafer-ui'
 import { Ruler } from 'leafer-x-ruler'
 import { Snap } from 'leafer-x-easy-snap'
 import type { SwitchInstance } from 'element-plus'
