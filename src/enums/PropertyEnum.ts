@@ -15,6 +15,7 @@ export const StringEnum = {
   windingRule: 'windingRule',
   text: 'text',
   url: 'url',
+  id: 'id',
 } as const
 
 export type StringEnum = (typeof StringEnum)[keyof typeof StringEnum]

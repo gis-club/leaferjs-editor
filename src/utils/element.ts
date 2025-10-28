@@ -14,6 +14,7 @@ import {
   type IUI,
   type IStrokeCap,
   type IStrokeJoin,
+  type ILeafer,
 } from 'leafer-ui'
 import { HTMLText } from '@leafer-in/html'
 import type { Ref } from 'vue'
@@ -78,6 +79,7 @@ export const createRect = (
 
   const rect = Rect.one(
     {
+      id: generateId(),
       editable: editable,
       width: Number(width),
       height: Number(height),
@@ -123,6 +125,7 @@ export const createText = (
 
   const leaferText = Text.one(
     {
+      id: generateId(),
       editable: editable,
       width: Number(width) === 0 ? undefined : Number(width),
       height: Number(height) === 0 ? undefined : Number(height),
@@ -154,6 +157,7 @@ export const createImage = (
 
   const image = Image.one(
     {
+      id: generateId(),
       editable: editable,
       width: Number(width) === 0 ? undefined : Number(width),
       height: Number(height) === 0 ? undefined : Number(height),
@@ -180,6 +184,7 @@ export const createPolygon = (
 
   const polygon = Polygon.one(
     {
+      id: generateId(),
       width: Number(width),
       height: Number(height),
       sides: Number(sides),
@@ -208,6 +213,7 @@ export const createEllipse = (
 
   const ellipse = Ellipse.one(
     {
+      id: generateId(),
       width: Number(width),
       height: Number(height),
       startAngle: Number(startAngle),
@@ -245,6 +251,7 @@ export const createLine = (
 
   const line = Line.one(
     {
+      id: generateId(),
       width: Number(width),
       points: points,
       rotation: Number(rotation),
@@ -275,6 +282,7 @@ export const createStar = (
 
   const star = Star.one(
     {
+      id: generateId(),
       width: Number(width),
       height: Number(height),
       corners: Number(corners),
@@ -302,6 +310,7 @@ export const createPath = (
 
   const leaferPath = Path.one(
     {
+      id: generateId(),
       path: path,
       windingRule: windingRule,
       scale: scale,
@@ -335,6 +344,7 @@ export const createArrow = (
 
   const arrow = Arrow.one(
     {
+      id: generateId(),
       x: Number(offsetX),
       y: Number(offsetY),
       strokeCap: strokeCap as unknown as IStrokeCap,
@@ -362,6 +372,7 @@ export const createHTML = (
 
   const html = HTMLText.one(
     {
+      id: generateId(),
       x: Number(offsetX),
       y: Number(offsetY),
       text: text,
@@ -375,8 +386,8 @@ export const createHTML = (
   app.tree.add(html)
 }
 
-export const removeElement = (app: App, element: IUI) => {
-  app.tree.remove(element)
+export const removeElement = (app: ILeafer, element: IUI) => {
+  app.remove(element)
 }
 
 /**

@@ -3,7 +3,7 @@ import { ref, useTemplateRef, onMounted, shallowRef, provide, nextTick } from 'v
 import { useDark } from '@vueuse/core'
 import { Sunny, Moon } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { type IAppConfig, type App, type IUI } from 'leafer-ui'
+import { type IAppConfig, type App, type IUI, PropertyEvent } from 'leafer-ui'
 import { Ruler } from 'leafer-x-ruler'
 import { Snap } from 'leafer-x-easy-snap'
 import type { SwitchInstance } from 'element-plus'
@@ -12,6 +12,8 @@ import RightMenu from '@/components/RightMenu.vue'
 import FilterConfig from '@/components/FilterConfig.vue'
 import ElementProperty from '@/components/properties/ElementProperty.vue'
 import StrokeConfig from '@/components/StrokeConfig.vue'
+
+import { registerHotkey } from '@/utils/hotkey' // 导入快捷键
 
 import {
   initApp,
@@ -27,8 +29,13 @@ import { beforeSelect, onContextmenu } from '@/utils/event'
 import ElementConfig from '@/pages/ElementConfig/index.vue'
 import Text from '@/views/Text.vue'
 
+import pinia from '@/stores/pinia'
+import { useAppStore } from '@/stores/app'
+import _ from 'lodash'
+
+const appStore = useAppStore(pinia)
+
 const isDark = useDark()
-const app = shallowRef<App>()
 const ruler = shallowRef<Ruler>()
 const snap = shallowRef<Snap>()
 
@@ -75,25 +82,25 @@ const changeFill = (color: string) => {
 
 // to top
 const toTop = () => {
-  const target = app.value?.editor.target
+  const target = appStore.app?.editor.target
   if (target && !Array.isArray(target)) {
     target.zIndex = undefined
   }
-  app.value?.editor.toTop()
+  appStore.app?.editor.toTop()
 }
 
 // to bottom
 const toBottom = () => {
-  const target = app.value?.editor.target
+  const target = appStore.app?.editor.target
   if (target && !Array.isArray(target)) {
     target.zIndex = undefined
   }
-  app.value?.editor.toBottom()
+  appStore.app?.editor.toBottom()
 }
 
 // to top by one
 const toTopByOne = () => {
-  const target = app.value?.editor.target
+  const target = appStore.app?.editor.target
   if (target && !Array.isArray(target)) {
     target.zIndex = (target.zIndex ?? 0) + 1
   }
@@ -101,7 +108,7 @@ const toTopByOne = () => {
 
 // to bottom by one
 const toBottomByOne = () => {
-  const target = app.value?.editor.target
+  const target = appStore.app?.editor.target
   if (target && !Array.isArray(target)) {
     target.zIndex = (target.zIndex ?? 0) - 1
   }
@@ -109,7 +116,7 @@ const toBottomByOne = () => {
 
 // delete element
 const deleteElement = () => {
-  app.value?.editor.list.forEach((rect) => rect.remove())
+  appStore.deleteLeafers(appStore.selectedElementIds)
 }
 
 // selected file json
@@ -258,9 +265,12 @@ const beforeChange = () => {
 
 // on mounted
 onMounted(() => {
-  app.value = initApp(leaferContainer.value as HTMLElement, configApp.value)
+
+  registerHotkey(leaferContainer.value as HTMLElement)
+
+  initApp(leaferContainer.value as HTMLElement, configApp.value)
   // before select
-  beforeSelect(app.value as App, (target) => {
+  beforeSelect(appStore.app!, (target) => {
     if (target && !Array.isArray(target)) {
       selectedTarget.value = target
       selectedElementProperties.value = Object.entries(target.toJSON()).map(
@@ -269,22 +279,36 @@ onMounted(() => {
           value: value instanceof Object ? JSON.stringify(value) : value,
         })
       )
+
+      target.on(PropertyEvent.CHANGE, () => {
+        selectedElementProperties.value = Object.entries(target.toJSON()).map(
+          ([key, value]) => ({
+            name: key,
+            value: value instanceof Object ? JSON.stringify(value) : value,
+          })
+        )
+      })
+
+      appStore.setSelectedElementIds([target.id as string])
     } else {
       selectedTarget.value = undefined
       selectedElementProperties.value = []
+      appStore.setSelectedElementIds([])
       isShowRightMenu.value = false
     }
+    console.log(selectedTarget.value);
+    
   })
 
   // on contextmenu
-  onContextmenu(app.value as App, (e: MouseEvent) => {
+  onContextmenu(appStore.app!, (e: MouseEvent) => {
     const { left, top } =
       leaferContainer.value?.getBoundingClientRect() as DOMRect
     const point = {
       x: e.clientX - left,
       y: e.clientY - top,
     }
-    const result = app.value?.pick(point)
+    const result = appStore.app?.pick(point)
     if (result && result.target) {
       selectedTarget.value = result.target as IUI
       isShowRightMenu.value = true
@@ -295,7 +319,7 @@ onMounted(() => {
     }
   })
 
-  ruler.value = new Ruler(app.value, {
+  ruler.value = new Ruler(appStore.app!, {
     enabled: true,
     ruleSize: 20,
   })
@@ -307,7 +331,7 @@ onMounted(() => {
   })
   ruler.value?.changeTheme('dark2')
 
-  snap.value = new Snap(app.value)
+  snap.value = new Snap(appStore.app!)
   snap.value?.enable(true)
 })
 
@@ -365,7 +389,7 @@ onMounted(() => {
     <el-main>
       <el-splitter lazy>
         <ElementConfig
-          :app="app as App"
+          :app="appStore.app!"
           :leaferContainer="leaferContainer as HTMLElement"
           :isOpenEditorEngine="isOpenEditorEngine"
         />

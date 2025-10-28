@@ -20,10 +20,8 @@ const appStore = useAppStore(pinia)
 // 导入自定义滤镜
 import '../../utils/filter'
 
-let app: App
-
-export const initApp = (element: HTMLElement, config: IAppConfig): App => {
-  app = new App({
+export const initApp = (element: HTMLElement, config: IAppConfig) => {
+  const app = new App({
     view: element,
     ...config,
   })
@@ -32,11 +30,10 @@ export const initApp = (element: HTMLElement, config: IAppConfig): App => {
 
   appStore.setApp(app)
 
-  return app
 }
 
 export const changeBackgroundColor = (color: string) => {
-  app.fill = color
+  appStore.app!.fill = color
 }
 
 /**
@@ -48,7 +45,7 @@ export const exportImage = async (name: string) => {
     throw new Error('File name is required')
   }
 
-  app.leafer?.tree?.export(name, {
+  appStore.leafer?.tree?.export(name, {
     quality: 2,
     pixelRatio: 2,
     fill: '#00000000',
@@ -90,11 +87,11 @@ export const exportTemplateJson = (name: string) => {
     throw new Error('File name is required')
   }
 
-  if (app.editor.editing) {
-    app.editor.target = undefined
+  if (appStore.app?.editor.editing) {
+    appStore.app!.editor!.target = undefined
   }
 
-  const json = app.leafer?.toJSON()
+  const json = appStore.leafer?.toJSON()
   FileSaver.saveAs(new Blob([JSON.stringify(json)]), name + '_template.json')
   ElMessage.success('Export template json success')
 }
@@ -107,7 +104,7 @@ export const exportSelectedJson = (name: string) => {
   if (!name) {
     throw new Error('File name is required')
   }
-  const json = app.editor.list.map((rect) => rect.toJSON())
+  const json = appStore.app?.editor.list.map((rect) => rect.toJSON())
   FileSaver.saveAs(new Blob([JSON.stringify(json)]), name + '_selected.json')
   ElMessage.success('Export selected json success')
 }
@@ -119,7 +116,7 @@ export const selectedJson = async (properties: Ref<{name: string, value: any}[]>
   const data = await importJson()
   const json = JSON.parse(data)
 
-  createLeafer(json, app, properties)
+  createLeafer(json, appStore.app!, properties)
   return json
 }
 
